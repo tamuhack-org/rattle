@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Actions } from 'react-native-router-flux';
 
 export function isLoading(bool:Boolean) {
   return {
@@ -18,6 +19,19 @@ export function loginFailed(error:Object) {
   return {
     type: 'LOGIN_FAILED',
     error
+  };
+}
+
+export function logoutComplete(){
+  return {
+    type: 'LOGOUT'
+  }
+}
+
+export function logout() {
+  return dispatch => {
+    dispatch(logoutComplete());
+    Actions.login.call();
   };
 }
 

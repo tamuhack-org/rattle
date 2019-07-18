@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import {
   StyleSheet,
   View,
@@ -7,9 +6,9 @@ import {
   LayoutAnimation,
   UIManager
 } from 'react-native';
-
 import { Actions } from 'react-native-router-flux';
-
+import { connect } from 'react-redux';
+import * as actions from '../../redux/actions/authActions';
 import { Button, Overlay } from 'react-native-elements';
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -48,7 +47,7 @@ class Admin extends Component<Props> {
     LayoutAnimation.easeInEaseOut();
     this.setState({ eventVisible: false, eventName: evt });
   }
-  
+
    render() {
      const eventName = this.state.eventName;
      const attribute = this.state.attribute;
@@ -59,7 +58,7 @@ class Admin extends Component<Props> {
               <Button title="Admin" containerStyle={styles.navbarTab} />
               <Button title="Scanner" containerStyle={styles.navbarTab} onPress={() => Actions['qrscan'].call()} />
             </View>
-            <Button title="Logout" containerStyle={styles.navbarTab} />
+            <Button title="Logout" containerStyle={styles.navbarTab} onPress={() => this.props.logout()} />
            </View>
            <View style={styles.pickerContainer}>
              <View style={styles.choiceContainer}>
@@ -226,4 +225,16 @@ const styles = StyleSheet.create({
  }
 });
 
-export default Admin;
+const mapStateToProps = state => ({
+  isLoggedIn: state.auth.isLoggedIn,
+  isLoading: state.auth.isLoading,
+  userData: state.auth.userData,
+  error: state.auth.error
+});
+
+const mapDispatchToProps = dispatch => ({
+  login: (email, password) => dispatch(actions.login({ email, password })),
+  logout: () => dispatch(actions.logout())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);
