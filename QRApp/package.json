@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-camera": "^2.11.0",
@@ -14,7 +15,10 @@
     "react-native-linear-gradient": "^2.5.4",
     "react-native-qrcode-scanner": "^1.2.1",
     "react-native-router-flux": "^4.0.6",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
