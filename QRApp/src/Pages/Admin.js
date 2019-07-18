@@ -26,7 +26,8 @@ class Admin extends Component<Props> {
     eventName: 'Lunch',
     attribute: 'Chicken',
     eventVisible: false,
-    attributeVisible: false };
+    attributeVisible: false,
+    checkIn: false };
     this.TopEnum = { None: 0, Repeat: 1, Server: 2 };
     this.visibleEvent = this.visibleEvent.bind(this);
     this.visibleAttribute = this.visibleAttribute.bind(this);
@@ -56,7 +57,14 @@ class Admin extends Component<Props> {
            <View style={styles.navbarContainer}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
               <Button title="Admin" containerStyle={styles.navbarTab} />
-              <Button title="Scanner" containerStyle={styles.navbarTab} onPress={() => Actions['qrscan'].call()} />
+              <Button
+              title="Scanner"
+              containerStyle={styles.navbarTab}
+              onPress={() => Actions.replace('qrscan',
+              { checkIn: this.state.checkIn,
+                meal: this.state.eventName,
+                restrictions: this.state.attribute })}
+              />
             </View>
             <Button title="Logout" containerStyle={styles.navbarTab} onPress={() => this.props.logout()} />
            </View>
@@ -68,6 +76,15 @@ class Admin extends Component<Props> {
                  title={eventName}
                  containerStyle={{ marginTop: 20 }}
                  onPress={() => this.visibleEvent()}
+               />
+             </View>
+             <View style={styles.choiceContainer}>
+               <Text h1 style={{ textAlign: 'center', fontSize: 20 }}> Check-In Boolean </Text>
+               <Button
+                 type="outline"
+                 title={""}
+                 containerStyle={{ marginTop: 20, backgroundColor: this.state.checkIn ? 'green' : 'red' }}
+                 onPress={() => this.setState({ checkIn: !this.state.checkIn })}
                />
              </View>
              <View style={styles.choiceContainer}>

@@ -22,16 +22,16 @@ export function loginFailed(error:Object) {
   };
 }
 
-export function logoutComplete(){
+export function logoutComplete() {
   return {
     type: 'LOGOUT'
-  }
+  };
 }
 
 export function logout() {
   return dispatch => {
     dispatch(logoutComplete());
-    Actions.login.call();
+    Actions.replace('login');
   };
 }
 

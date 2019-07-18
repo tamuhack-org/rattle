@@ -1,12 +1,16 @@
  import React, { Component } from 'react';
-
  import {
    View,
    StyleSheet,
    Text,
    TouchableOpacity,
  } from 'react-native';
+ import axios from 'axios';
+ import { Actions } from 'react-native-router-flux';
+ import { connect } from 'react-redux';
+ import * as actions from '../../redux/actions/authActions';
  import { Overlay } from 'react-native-elements';
+
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
@@ -16,12 +20,32 @@ class QRScan extends Component<Props> {
   state = { Text: 'Sample', Counter: 0, confirm: false }
 
   onSuccess(e) {
-    const jsonObj = JSON.parse(e.data);
-    this.setState({ Text: jsonObj.email, Counter: this.state.Counter + 1, confirm: true }, () => {
-    });
+    const data = JSON.parse(e.data);
+    const authToken = 'Token ' + this.props.userData.data.token;
+    console.log(this.props.userData.data.token);
+
+    axios.post(
+        'https://register.pango.li/api/checkin',
+        {
+           email: data.data
+        },
+        {
+           headers: {
+             'content-type': 'application/json',
+             authorization: authToken
+           }
+        }
+      ).then(response => {
+        console.log(response);
+        this.setState({ confirm: true, Text: "Success" });
+      }).catch(error => {
+        console.log(error);
+        this.setState({ confirm: true, Text: "error" });
+      });
   }
 
   render() {
+    console.log(this.props);
     const topText = this.state.Text;
     const counter = this.state.Counter;
     return (
@@ -79,4 +103,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QRScan;
+const mapStateToProps = state => ({
+  isLoggedIn: state.auth.isLoggedIn,
+  isLoading: state.auth.isLoading,
+  userData: state.auth.userData,
+  error: state.auth.error
+});
+
+const mapDispatchToProps = dispatch => ({
+  login: (email, password) => dispatch(actions.login({ email, password })),
+  logout: () => dispatch(actions.logout())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QRScan);

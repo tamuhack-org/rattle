@@ -14,11 +14,13 @@ export class Login extends Component {
   }
 
   login() {
+    console.log(this.props);
     this.props.login(this.state.email, this.state.password).then(() => {
       if (this.props.error) {
         console.log('error');
       } else {
-        Actions.admin.call();
+        console.log(this.props);
+        Actions.replace('admin');
       }
     });
   }
