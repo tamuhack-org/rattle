@@ -4,12 +4,14 @@ import {
   View,
   Text,
   LayoutAnimation,
-  UIManager
+  UIManager,
+  Picker
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/actions/authActions';
-import { Button, Overlay } from 'react-native-elements';
+import { Button, Overlay, Icon } from 'react-native-elements';
 
 UIManager.setLayoutAnimationEnabledExperimental &&
 UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -19,20 +21,25 @@ class Admin extends Component<Props> {
 
   constructor(props) {
     super(props);
-
-    this.state = { Hello: 'Hello',
-    selection: 'None',
-    selectionTwo: 'None',
-    eventName: 'Lunch',
-    attribute: 'Chicken',
-    eventVisible: false,
-    attributeVisible: false,
-    checkIn: false };
     this.TopEnum = { None: 0, Repeat: 1, Server: 2 };
     this.visibleEvent = this.visibleEvent.bind(this);
     this.visibleAttribute = this.visibleAttribute.bind(this);
     this.clickEvent = this.clickEvent.bind(this);
   }
+
+  state = {
+    Hello: 'Hello',
+    selection: 'None',
+    selectionTwo: 'None',
+    eventName: 'Check In',
+    attribute: 'Chicken',
+    eventVisible: false,
+    attributeVisible: false,
+    modalVisible: false,
+    checkIn: false,
+    events: ['Check In', 'Workshop', 'Breakfast', 'Lunch', 'Dinner', 'Midnight Snack'],
+    attributes: ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None']
+  };
 
   visibleEvent() {
     LayoutAnimation.linear();
@@ -53,101 +60,69 @@ class Admin extends Component<Props> {
      const eventName = this.state.eventName;
      const attribute = this.state.attribute;
      return (
-         <View style={styles.centerContainer}>
-           <View style={styles.navbarContainer}>
-            <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <Button title="Admin" containerStyle={styles.navbarTab} />
-              <Button
-              title="Scanner"
-              containerStyle={styles.navbarTab}
-              onPress={() => Actions.replace('qrscan',
-              { checkIn: this.state.checkIn,
-                meal: this.state.eventName,
-                restrictions: this.state.attribute })}
-              />
-            </View>
-            <Button title="Logout" containerStyle={styles.navbarTab} onPress={() => this.props.logout()} />
-           </View>
-           <View style={styles.pickerContainer}>
-             <View style={styles.choiceContainer}>
-               <Text h1 style={{ textAlign: 'center', fontSize: 20 }}> Event </Text>
-               <Button
-                 type="outline"
-                 title={eventName}
-                 containerStyle={{ marginTop: 20 }}
-                 onPress={() => this.visibleEvent()}
-               />
-             </View>
-             <View style={styles.choiceContainer}>
-               <Text h1 style={{ textAlign: 'center', fontSize: 20 }}> Check-In Boolean </Text>
-               <Button
-                 type="outline"
-                 title={""}
-                 containerStyle={{ marginTop: 20, backgroundColor: this.state.checkIn ? 'green' : 'red' }}
-                 onPress={() => this.setState({ checkIn: !this.state.checkIn })}
-               />
-             </View>
-             <View style={styles.choiceContainer}>
-              <Text h1 style={{ textAlign: 'center', fontSize: 20 }}> Attribute </Text>
-               <Button
-                 type="outline"
-                 title={attribute}
-                 containerStyle={{ marginTop: 20 }}
-                 onPress={() => this.visibleAttribute()}
-               />
-             </View>
-           </View>
-         <Overlay
-            isVisible={this.state.eventVisible}
-            onBackdropPress={() => {
-              this.setState({ eventVisible: false });
-            }}
-            windowBackgroundColor="rgba(255, 255, 255, .5)"
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-         >
-            <View>
-              <Button
-                title="Breakfast"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.clickEvent('Breakfast')}
-              />
-              <Button
-                title="Lunch"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.clickEvent('Lunch')}
-              />
-              <Button
-                title="Dinner"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.clickEvent('Dinner')}
-              />
-            </View>
-          </Overlay>
-          <Overlay
-            isVisible={this.state.attributeVisible}
-            windowBackgroundColor="rgba(255, 255, 255, .5)"
-            onBackdropPress={() => this.setState({ attributeVisible: false })}
-          >
-            <View>
-              <Button
-                title="Chicken"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.setState({ attribute: 'Chicken', attributeVisible: false })}
-              />
-              <Button
-                title="Fish"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.setState({ attribute: 'Fish', attributeVisible: false })}
-              />
-              <Button
-                title="Beef"
-                containerStyle={{ marginTop: 40 }}
-                onPress={() => this.setState({ attribute: 'Beef', attributeVisible: false })}
-              />
-            </View>
-          </Overlay>
+       <View style={styles.centerContainer}>
+        <Button title="Logout"
+        containerStyle={styles.navbarTab} onPress={() => this.props.logout()}
+        buttonStyle={{ display: 'flex', justifyContent: 'center', alignSelf: 'center' }}
+        />
+        <Text h1 style={{ textAlign: 'center', fontSize: 40, marginTop: 40 }}> Scanning Home </Text>
+        <Button
+          title="Instructions"
+          onPress={() => this.setState({ modalVisible: true })}
+          containerStyle={{ position: 'absolute', bottom: 50, alignSelf: 'center', justifyContent: 'flex-end', width: '60%' }}
+          buttonStyle={{ padding: 10 }}
+          titleStyle={{ fontSize: 20 }}
+        />
+        <Picker
+          selectedValue={this.state.eventName}
+          onValueChange={(itemValue) => this.setState({ eventName: itemValue })}>
+          {
+          this.state.events.map((v, index) => {
+           return <Picker.Item label={v} value={v} key={index} />
+          })
+          }
+        </Picker>
 
+        {
+          this.state.eventName !== 'Check In' &&
+          this.state.eventName !== 'Workshop' &&
+          <Picker
+            selectedValue={this.state.attribute}
+            onValueChange={(itemValue) => this.setState({ attribute: itemValue })}>
+            {
+            this.state.attributes.map((v, index) => {
+             return <Picker.Item label={v} value={v} key={index} />
+            })
+            }
+          </Picker>
+        }
+
+        <Button
+        title="Scanner"
+        containerStyle={{ marginTop: 50, justifyContent: 'center', alignSelf: 'center' }}
+        onPress={() => Actions.replace('qrscan',
+        { eventName: this.state.eventName,
+          attribute: this.state.attribute })}
+        />
+
+        <Modal
+          style={{ margin: 0, justifyContent: 'flex-end', height: 400 }}
+          isVisible={this.state.modalVisible}
+          animationIn='slideInUp'
+          animationInTiming={500}
+          animationOut='slideOutDown'
+          animationOutTiming={500}
+        >
           <View style={styles.instructionContainer}>
+            <Icon
+              name='times'
+              type='font-awesome'
+              color='#f50'
+              containerStyle={{ position: 'absolute', right: 20, top: 20 }}
+              iconStyle={{ color: 'black' }}
+              hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
+              onPress={() => this.setState({ modalVisible: false })}
+            />
             <Text style={{ fontWeight: 'bold', width: '100%', fontSize: 17, marginBottom: 20 }}>
               Instructions
             </Text>
@@ -160,40 +135,35 @@ class Admin extends Component<Props> {
               <Text style={{ fontWeight: 'bold' }}> 2. </Text>
               Go to Scanner tab and scan the QR code.
             </Text>
-
             <Text style={{ width: '100%', fontSize: 17, marginBottom: 20 }}>
               <Text style={{ fontWeight: 'bold' }}> 3. </Text>
               Verify the confirmation page. If you see any
               warning use your discretion to resolve them.
             </Text>
-
             <Text style={{ width: '100%', fontSize: 17, marginBottom: 20, textAlign: 'center', color: '#C0C0C0' }}>
               Things to look out for:
             </Text>
-
             <Text style={{ width: '100%', fontSize: 17, marginBottom: 20 }}>
               <Text style={{ fontWeight: 'bold' }}> Repeat Entry - </Text>
               If the hacker has already been marked for the event
               being scanned for.
             </Text>
-
             <Text style={{ width: '100%', fontSize: 17, marginBottom: 20 }}>
               <Text style={{ fontWeight: 'bold' }}> Server Errors - </Text>
               Any error will be rendered on the page.
               This should only arise during QA testing.
             </Text>
-
           </View>
-
-         </View>
-       );
-    }
+        </Modal>
+       </View>
+     );
+  }
 }
 
 const styles = StyleSheet.create({
  centerContainer: {
     display: 'flex',
-    height: '100%'
+    height: '100%',
  },
  navbarContainer: {
    display: 'flex',
@@ -204,8 +174,9 @@ const styles = StyleSheet.create({
  },
  navbarTab: {
    display: 'flex',
-   width: 80,
+   marginTop: 30,
    justifyContent: 'center',
+   alignSelf: 'center',
    alignItems: 'center',
  },
  selectionText: {
@@ -234,11 +205,11 @@ const styles = StyleSheet.create({
  instructionContainer: {
    display: 'flex',
    flexDirection: 'column',
-   width: '90%',
-   height: '100%',
-   marginLeft: '5%',
-   marginRight: '10%',
-   marginTop: 50
+   paddingLeft: '5%',
+   paddingRight: '5%',
+   paddingTop: 50,
+   height: '60%',
+   backgroundColor: 'white'
  }
 });
 

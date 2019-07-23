@@ -11,9 +11,9 @@ class App extends Component<Props> {
    return (
      <Router>
       <Stack key="root">
-        <Scene key="login" component={Login} />
-        <Scene key="admin" component={Admin} />
-        <Scene key="qrscan" component={QRScan} />
+        <Scene key="login" component={Login} hideNavBar />
+        <Scene key="admin" component={Admin} hideNavBar />
+        <Scene key="qrscan" component={QRScan} hideNavBar />
       </Stack>
      </Router>
    );
