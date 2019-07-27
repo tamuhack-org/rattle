@@ -20,11 +20,16 @@ class QRScan extends Component<Props> {
   constructor(props) {
     super(props);
     this.checkInUrl = 'https://register.pango.li/api/checkin';
+    this.checkInStatusUrl = 'https://register.pango.li/api/checkin?email=';
     this.foodUrl = 'https://register.pango.li/api/food';
     this.workshopUrl = 'https://register.pango.li/api/workshops';
     this.foodOptions = ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None'];
     this.eventName = Object.prototype.hasOwnProperty.call(props, 'eventName') ? this.props.eventName : '';
     this.attribute = Object.prototype.hasOwnProperty.call(props, 'attribute') ? this.props.attribute : '';
+
+    if (this.eventName === 'Check In') {
+      this.eventType = 'checkin';
+    }
 
     for (var i = 0; i < this.foodOptions.length; i++) {
       console.log(this.foodOptions[i]);
@@ -56,7 +61,7 @@ class QRScan extends Component<Props> {
 
   }
 
-  onQRRead(scan) {
+  async onQRRead(scan) {
     console.log(scan);
     let jsonData = '';
 
@@ -104,12 +109,29 @@ class QRScan extends Component<Props> {
     if (this.eventName === 'Workshop') {
       bodyObj.eventRequest = 'workshop';
     }
+    var checkedIn = false;
 
-    //this.setModalVisible(true);
+    await axios.get(
+        this.checkInStatusUrl + '' + bodyObj.email,
+        {
+           headers: {
+             'content-type': 'application/json',
+             authorization: 'Token ' + this.authToken
+           }
+        }
+      ).then(response => {
+        if (response.data.checked_in){
+          checkedIn = true;
+        }
+        console.log(response);
+      }).catch(error => {
+        console.log(error);
+      });
 
     console.log(bodyObj);
     this.setState({
       requestBody: bodyObj,
+      boolCheckedIn: checkedIn,
       email: jsonData.email,
       firstName: jsonData.first_name,
       lastName: jsonData.last_name }, () => {
@@ -160,13 +182,21 @@ class QRScan extends Component<Props> {
       ).then(response => {
         console.log('Success');
         console.log(response);
-        this.setState({ boolCheckedIn: true });
+        if (this.state.requestBody.eventRequest === 'checkin') {
+          this.setState({ boolCheckedIn: true }, () => {
+            this.setModalVisible(false);
+          });
+        }
       }).catch(error => {
-        if(error.response.status === 412){
+        if (error.response.status === 412){
           Alert.alert('Person has not checked in! Please contact a director.');
+        } else{
+          Alert.alert('Unknown error!');
         }
         console.log(error.response);
       });
+
+      this.setModalVisible(false);
   }
 
   renderModalContent = () => (
@@ -203,7 +233,7 @@ class QRScan extends Component<Props> {
       style={[styles.checkInStatusRow,
         { borderColor: this.state.boolCheckedIn ? '#5CD059' : '#FFBFBF' }]}
       >
-        <Text style={{ fontSize: 25 }}>Not Checked In</Text>
+        <Text style={{ fontSize: 25 }}>{this.state.boolCheckedIn ? 'Checked In' : 'Not Checked In'}</Text>
       </View>
       <View style={styles.emailRow}>
         <Text style={{ fontSize: 16, fontWeight: 'bold' }} >Emails</Text>
@@ -212,11 +242,13 @@ class QRScan extends Component<Props> {
       <Button
       onPress={() => this.sendRequest()}
       disabled={this.state.boolCheckedIn && this.state.requestBody.eventRequest === 'checkin'}
-      buttonStyle={{ display: 'flex', flex: 1, padding: 25, height: 150, justifyContent: 'center', alignItems: 'center' }} title='Check In' />
+      buttonStyle={{ display: 'flex', flex: 1, padding: 25, height: 150, justifyContent: 'center', alignItems: 'center' }}
+      title={this.state.requestBody.eventRequest === 'checkin' ? 'Check In' : 'Event Check In'} />
     </View>
   );
 
   render() {
+    console.log('Checked In ' + this.state.boolCheckedIn);
     return (
       <View style={{ display: 'flex' }}>
         <View style={styles.topContent}>
