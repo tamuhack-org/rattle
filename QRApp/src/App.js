@@ -11,13 +11,12 @@ class App extends Component<Props> {
    return (
      <Router>
       <Stack key="root">
-        <Scene key="login" component={Login} hideNavBar />
-        <Scene key="admin" component={Admin} hideNavBar />
         <Scene key="qrscan" component={QRScan} hideNavBar />
+        <Scene key="admin" component={Admin} hideNavBar />
+        <Scene key="login" component={Login} hideNavBar />
       </Stack>
      </Router>
    );
  }
 }
-
 export default App;

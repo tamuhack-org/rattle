@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   LayoutAnimation,
   UIManager,
   Picker
@@ -11,10 +10,8 @@ import Modal from 'react-native-modal';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/actions/authActions';
-import { Button, Overlay, Icon } from 'react-native-elements';
-
-UIManager.setLayoutAnimationEnabledExperimental &&
-UIManager.setLayoutAnimationEnabledExperimental(true);
+import { Button, Text, Icon } from 'react-native-elements';
+import ModalSelector from 'react-native-modal-selector';
 
 type Props = {};
 class Admin extends Component<Props> {
@@ -25,20 +22,40 @@ class Admin extends Component<Props> {
     this.visibleEvent = this.visibleEvent.bind(this);
     this.visibleAttribute = this.visibleAttribute.bind(this);
     this.clickEvent = this.clickEvent.bind(this);
+
+    var index = 0;
+    this.events = [
+      { key: index++, label: 'Check In' },
+      { key: index++, label: 'Workshop' },
+      { key: index++, label: 'Breakfast' },
+      { key: index++, label: 'Lunch' },
+      { key: index++, label: 'Dinner' },
+      { key: index++, label: 'Midnight Snack' }
+    ];
+
+    index = 0;
+
+    this.attributes = [
+      { key: index++, label: 'Vegan' },
+      { key: index++, label: 'Vegetarian' },
+      { key: index++, label: 'Halal' },
+      { key: index++, label: 'Kosher' },
+      { key: index++, label: 'Food Allergies' },
+      { key: index++, label: 'None' }
+    ];
   }
+
 
   state = {
     Hello: 'Hello',
     selection: 'None',
     selectionTwo: 'None',
     eventName: 'Check In',
-    attribute: 'Chicken',
+    attribute: 'None',
     eventVisible: false,
     attributeVisible: false,
     modalVisible: false,
     checkIn: false,
-    events: ['Check In', 'Workshop', 'Breakfast', 'Lunch', 'Dinner', 'Midnight Snack'],
-    attributes: ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None']
   };
 
   visibleEvent() {
@@ -57,52 +74,54 @@ class Admin extends Component<Props> {
   }
 
    render() {
-     const eventName = this.state.eventName;
-     const attribute = this.state.attribute;
      return (
-       <View style={styles.centerContainer}>
-        <Button title="Logout"
-        containerStyle={styles.navbarTab} onPress={() => this.props.logout()}
-        buttonStyle={{ display: 'flex', justifyContent: 'center', alignSelf: 'center' }}
+       <View style={styles.container}>
+        <Text
+          style={styles.floatTextTop}
+          onPress={() => this.props.logout()}
+        >
+          LOG OUT
+        </Text>
+
+        <Text h3 style={{ marginTop: '40%' }}>Scanner Home</Text>
+        <ModalSelector
+          data={this.events}
+          initValue="Select an event!"
+          onChange={(itemValue) => this.setState({ eventName: itemValue.label })}
+          style={{ marginTop: 10 }}
+          animationType='fade'
         />
-        <Text h1 style={{ textAlign: 'center', fontSize: 40, marginTop: 40 }}> Scanning Home </Text>
-        <Button
-          title="Instructions"
-          onPress={() => this.setState({ modalVisible: true })}
-          containerStyle={{ position: 'absolute', bottom: 50, alignSelf: 'center', justifyContent: 'flex-end', width: '60%' }}
-          buttonStyle={{ padding: 10 }}
-          titleStyle={{ fontSize: 20 }}
-        />
-        <Picker
-          selectedValue={this.state.eventName}
-          onValueChange={(itemValue) => this.setState({ eventName: itemValue })}>
-          {
-          this.state.events.map((v, index) => {
-           return <Picker.Item label={v} value={v} key={index} />
-          })
-          }
-        </Picker>
 
         {
           this.state.eventName !== 'Check In' &&
           this.state.eventName !== 'Workshop' &&
-          <Picker
-            selectedValue={this.state.attribute}
-            onValueChange={(itemValue) => this.setState({ attribute: itemValue })}>
-            {
-            this.state.attributes.map((v, index) => {
-             return <Picker.Item label={v} value={v} key={index} />
-            })
-            }
-          </Picker>
+          <ModalSelector
+            data={this.attributes}
+            initValue="Select something yummy!"
+            onChange={(itemValue) => this.setState({ attribute: itemValue.label })}
+            style={{ marginTop: 15 }}
+            animationType='fade'
+          />
         }
 
         <Button
-        title="Scanner"
-        containerStyle={{ marginTop: 50, justifyContent: 'center', alignSelf: 'center' }}
-        onPress={() => Actions.replace('qrscan',
-        { eventName: this.state.eventName,
-          attribute: this.state.attribute })}
+          containerStyle={{ marginTop: 15 }}
+          buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
+          titleStyle={{ color: 'black', fontSize: 18 }}
+          title="New Scan"
+          type="outline"
+          onPress={() => Actions.replace('qrscan',
+          { eventName: this.state.eventName,
+            attribute: this.state.attribute })}
+        />
+
+        <Button
+          containerStyle={styles.floatButtonBottom}
+          buttonStyle={{ borderColor: '#C8C8C8', borderWidth: 4 }}
+          titleStyle={{ color: 'black', fontSize: 18 }}
+          title="Instructions"
+          type="outline"
+          onPress={() => this.setState({ modalVisible: true })}
         />
 
         <Modal
@@ -161,57 +180,93 @@ class Admin extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
- centerContainer: {
-    display: 'flex',
-    height: '100%',
- },
- navbarContainer: {
-   display: 'flex',
-   flexDirection: 'row',
-   width: '100%',
-   height: '10%',
-   justifyContent: 'space-between'
- },
- navbarTab: {
-   display: 'flex',
-   marginTop: 30,
-   justifyContent: 'center',
-   alignSelf: 'center',
-   alignItems: 'center',
- },
- selectionText: {
-   color: 'red',
-   fontSize: 30
- },
- picker: {
-   display: 'flex',
-   width: '50%',
-   backgroundColor: 'white',
-   alignItems: 'center',
-   justifyContent: 'center'
- },
- pickerContainer: {
-   display: 'flex',
-   flexDirection: 'row',
-   textAlign: 'center',
-   justifyContent: 'space-around',
-   marginTop: 20
- },
- choiceContainer: {
-   display: 'flex',
-   flexDirection: 'column',
-   textAlign: 'center'
- },
- instructionContainer: {
-   display: 'flex',
-   flexDirection: 'column',
-   paddingLeft: '5%',
-   paddingRight: '5%',
-   paddingTop: 50,
-   height: '60%',
-   backgroundColor: 'white'
- }
+    container: {
+        display: 'flex',
+        marginLeft: 15,
+        marginRight: 15,
+        height: '100%'
+    },
+    selectInput: {
+        borderWidth: 4,
+        borderColor: 'black',
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginTop: 15,
+        height: 50,
+        width: '100%'
+    },
+    floatButtonBottom: {
+        display: 'flex',
+        position: 'absolute',
+        bottom: 40,
+        margin: 10,
+        width: '75%',
+        justifyContent: 'center',
+        alignSelf: 'center'
+    },
+    floatTextTop: {
+        position: 'absolute',
+        top: 0,
+        margin: 10,
+        right: 0,
+        left: 0,
+        textAlign: 'center',
+        fontSize: 16
+    },
+    instructionContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      paddingLeft: '5%',
+      paddingRight: '5%',
+      paddingTop: 50,
+      height: '60%',
+      backgroundColor: 'white'
+    },
 });
+
+// const styles = StyleSheet.create({
+//  centerContainer: {
+//     display: 'flex',
+//     height: '100%',
+//  },
+//  navbarContainer: {
+//    display: 'flex',
+//    flexDirection: 'row',
+//    width: '100%',
+//    height: '10%',
+//    justifyContent: 'space-between'
+//  },
+//  navbarTab: {
+//    display: 'flex',
+//    marginTop: 30,
+//    justifyContent: 'center',
+//    alignSelf: 'center',
+//    alignItems: 'center',
+//  },
+//  selectionText: {
+//    color: 'red',
+//    fontSize: 30
+//  },
+//  picker: {
+//    display: 'flex',
+//    width: '50%',
+//    backgroundColor: 'white',
+//    alignItems: 'center',
+//    justifyContent: 'center'
+//  },
+//  pickerContainer: {
+//    display: 'flex',
+//    flexDirection: 'row',
+//    textAlign: 'center',
+//    justifyContent: 'space-around',
+//    marginTop: 20
+//  },
+//  choiceContainer: {
+//    display: 'flex',
+//    flexDirection: 'column',
+//    textAlign: 'center'
+//  }
+// });
 
 const mapStateToProps = state => ({
   isLoggedIn: state.auth.isLoggedIn,

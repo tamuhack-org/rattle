@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Text, TextInput } from 'react-native';
+import { View, TextInput, StyleSheet, Alert } from 'react-native';
+import { Button, Text } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/actions/authActions';
@@ -17,7 +18,7 @@ export class Login extends Component {
     console.log(this.props);
     this.props.login(this.state.email, this.state.password).then(() => {
       if (this.props.error) {
-        console.log('error');
+        Alert.alert('Login Failed. Try again!');
       } else {
         console.log(this.props);
         Actions.replace('admin');
@@ -27,18 +28,48 @@ export class Login extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <TextInput autoCapitalize="none" keyboardType="email-address" style={{ marginTop: 200, marginHorizontal: 40, height: 40 }} placeholder="Enter email" value={this.state.email} onChangeText={email => this.setState({ email })}/>
-        <TextInput autoCapitalize="none" secureTextEntry style={{ marginTop: 20, marginHorizontal: 40, height: 40 }} placeholder="Enter password" value={this.state.password} onChangeText={password => this.setState({ password })}/>
-        <TouchableOpacity onPress={() => this.login()}>
-          <Text style={{ marginTop: 20, color: 'black', textAlign: 'center' }}>
-            Login
-          </Text>
-        </TouchableOpacity>
+      <View style={styles.container}>
+          <Text h3>Scanner Login</Text>
+          <TextInput
+              style={styles.textInput}
+              placeholder="Username"
+              onChangeText={(email) => this.setState({ email })}
+              value={this.state.email}
+          />
+          <TextInput
+              secureTextEntry
+              style={styles.textInput}
+              placeholder="Password"
+              onChangeText={(password) => this.setState({ password })}
+              value={this.state.password}
+          />
+          <Button
+              containerStyle={{ marginTop: 15 }}
+              buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
+              titleStyle={{ color: 'black', fontSize: 18 }}
+              title="Login"
+              type="outline"
+              onPress={() => this.login()}
+          />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        paddingTop: '20%',
+        marginLeft: 15,
+        marginRight: 15
+    },
+    textInput: {
+        borderWidth: 2,
+        borderColor: 'black',
+        paddingLeft: 10,
+        marginTop: 15,
+        height: 40
+    }
+});
 
 const mapStateToProps = state => ({
   isLoggedIn: state.auth.isLoggedIn,

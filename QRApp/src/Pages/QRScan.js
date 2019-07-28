@@ -4,9 +4,11 @@
    StyleSheet,
    Text,
    Dimensions,
-   Alert
+   Alert,
+   TextInput,
+   ScrollView
  } from 'react-native';
- import { Button, Badge, Icon } from 'react-native-elements';
+ import { Button, Badge, Icon, ListItem } from 'react-native-elements';
  import QRCodeScanner from 'react-native-qrcode-scanner';
  import Modal from 'react-native-modal';
  import axios from 'axios';
@@ -19,10 +21,10 @@ class QRScan extends Component<Props> {
 
   constructor(props) {
     super(props);
-    this.checkInUrl = 'https://register.pango.li/api/checkin';
-    this.checkInStatusUrl = 'https://register.pango.li/api/checkin?email=';
-    this.foodUrl = 'https://register.pango.li/api/food';
-    this.workshopUrl = 'https://register.pango.li/api/workshops';
+    this.checkInUrl = 'https://register.tamuhack.com/volunteer/checkin';
+    this.checkInStatusUrl = 'https://register.tamuhack.com/volunteer/checkin?email=';
+    this.foodUrl = 'https://register.tamuhack.com/volunteer/food';
+    this.workshopUrl = 'https://register.tamuhack.com/volunteer/workshops';
     this.foodOptions = ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None'];
     this.eventName = Object.prototype.hasOwnProperty.call(props, 'eventName') ? this.props.eventName : '';
     this.attribute = Object.prototype.hasOwnProperty.call(props, 'attribute') ? this.props.attribute : '';
@@ -39,9 +41,9 @@ class QRScan extends Component<Props> {
         break;
       }
     }
+    //this.authToken = Object.prototype.hasOwnProperty.call(props, 'userData') ? this.props.userData.data.token : '';
 
-    this.authToken = Object.prototype.hasOwnProperty.call(props, 'userData') ? this.props.userData.data.token : '';
-
+    this.authToken = 'temp';
     console.log(this.eventName);
     console.log(this.eventType);
     console.log(this.attribute);
@@ -54,11 +56,9 @@ class QRScan extends Component<Props> {
     firstName: 'None',
     lastName: 'None',
     email: 'None',
-    boolCheckedIn: false
-  }
-
-  componentDidMount() {
-
+    boolCheckedIn: false,
+    searchManual: false,
+    list: []
   }
 
   async onQRRead(scan) {
@@ -67,6 +67,7 @@ class QRScan extends Component<Props> {
 
     if (this.authToken === '') {
       // Alert user to relog!
+      Alert.alert('No authentication token! Please relog!');
       console.log('No Auth Token!');
       return;
     }
@@ -75,6 +76,7 @@ class QRScan extends Component<Props> {
       jsonData = JSON.parse(scan.data);
     } catch (exception) {
       // Alert user
+      Alert.alert('Invalid QR Code. Json parsing failed');
       console.log('Cant parse Json!');
       return;
     }
@@ -83,6 +85,7 @@ class QRScan extends Component<Props> {
 
     if (!Object.prototype.hasOwnProperty.call(jsonData, 'email')) {
       // Alert user
+      Alert.alert('No email key in json! Invalid QR Code');
       console.log('No email key in Json!');
       return;
     }
@@ -120,7 +123,7 @@ class QRScan extends Component<Props> {
            }
         }
       ).then(response => {
-        if (response.data.checked_in){
+        if (response.data.checked_in) {
           checkedIn = true;
         }
         console.log(response);
@@ -145,6 +148,10 @@ class QRScan extends Component<Props> {
     }
 
     this.setState({ modalVisible: visible });
+  }
+
+  setManualVisible(visible) {
+    this.setState({ searchManual: visible });
   }
 
   sendRequest() {
@@ -188,9 +195,9 @@ class QRScan extends Component<Props> {
           });
         }
       }).catch(error => {
-        if (error.response.status === 412){
+        if (error.response.status === 412) {
           Alert.alert('Person has not checked in! Please contact a director.');
-        } else{
+        } else {
           Alert.alert('Unknown error!');
         }
         console.log(error.response);
@@ -243,38 +250,92 @@ class QRScan extends Component<Props> {
       onPress={() => this.sendRequest()}
       disabled={this.state.boolCheckedIn && this.state.requestBody.eventRequest === 'checkin'}
       buttonStyle={{ display: 'flex', flex: 1, padding: 25, height: 150, justifyContent: 'center', alignItems: 'center' }}
-      title={this.state.requestBody.eventRequest === 'checkin' ? 'Check In' : 'Event Check In'} />
+      title={this.state.requestBody.eventRequest === 'checkin' ? 'Check In' : 'Event Check In'}
+      />
     </View>
   );
 
   render() {
+    const manual = this.state.searchManual;
+    const list = this.state.list;
     console.log('Checked In ' + this.state.boolCheckedIn);
     return (
-      <View style={{ display: 'flex' }}>
+      <View style={{ display: 'flex', height: '100%' }}>
         <View style={styles.topContent}>
           <Button
           onPress={() => Actions.replace('admin')}
-          containerStyle={{ display: 'flex', width: '70%' }} title="Back to Scanning Selection" />
-          <Button containerStyle={{ display: 'flex', width: '70%' }} title="Search Manually" />
+          containerStyle={{ display: 'flex', width: '70%' }} title="Back to Scanning Selection"
+          buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
+          type='outline'
+          titleStyle={{ color: 'black', fontSize: 18 }}
+          />
+          <Button
+          containerStyle={{ display: 'flex', width: '70%', marginTop: 10 }}
+          type='outline'
+          buttonStyle={{ borderColor: '#C8C8C8', borderWidth: 4 }}
+          titleStyle={{ color: 'black', fontSize: 18 }}
+          title={!manual ? 'Search Manually' : 'Scan QR'}
+          onPress={() => this.setManualVisible(!manual)}
+          />
         </View>
-        <QRCodeScanner
-          ref={(node) => { this.scanner = node; }}
-          onRead={this.onQRRead.bind(this)}
-          cameraType='back'
-          cameraStyle={{ height: Dimensions.get('window').height }}
-          topViewStyle={{ height: 0, flex: 0 }}
-          bottomViewStyle={{ height: 0, flex: 0 }}
-        />
-        <Modal
-          style={{ margin: 0, justifyContent: 'flex-end' }}
-          isVisible={this.state.modalVisible}
-          animationIn='slideInUp'
-          animationInTiming={500}
-          animationOut='slideOutDown'
-          animationOutTiming={500}
-        >
-          {this.renderModalContent()}
-        </Modal>
+        {
+          !this.state.searchManual &&
+          <React.Fragment>
+            <QRCodeScanner
+              ref={(node) => { this.scanner = node; }}
+              onRead={this.onQRRead.bind(this)}
+              cameraType='back'
+              cameraStyle={{ height: Dimensions.get('window').height }}
+              topViewStyle={{ height: 0, flex: 0 }}
+              bottomViewStyle={{ height: 0, flex: 0 }}
+            />
+          </React.Fragment>
+        }
+
+        {
+          this.state.searchManual &&
+          <View style={{ marginLeft: 15, marginRight: 15 }}>
+            <TextInput
+                  style={styles.textInput}
+                  placeholder="Search User by Name"
+                  onChangeText={(username) => this.setState({ username })}
+                  value={this.state.username}
+            />
+              <Button
+                  containerStyle={{ marginTop: 15, marginBottom: 30 }}
+                  buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
+                  titleStyle={{ color: 'black', fontSize: 18 }}
+                  title="Search User"
+                  type="outline"
+              />
+              <ScrollView
+                style={{ display: 'flex', height: 600 }}
+              >
+                {
+                    list.map((l, i) => (
+                        <ListItem
+                            key={i}
+                            rightIcon={{ name: 'add' }}
+                            title={l}
+                            titleStyle={{ width: '78%' }}
+                            onPress={() => console.log('Icon Pressed')}
+                        />
+                    ))
+                }
+              </ScrollView>
+              <Modal
+                style={{ margin: 0, justifyContent: 'flex-end' }}
+                isVisible={this.state.modalVisible}
+                animationIn='slideInUp'
+                animationInTiming={500}
+                animationOut='slideOutDown'
+                animationOutTiming={500}
+              >
+                {this.renderModalContent()}
+              </Modal>
+          </View>
+        }
+
       </View>
     );
   }
@@ -315,6 +376,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#DEDEDE',
     marginBottom: 35
+  },
+  container: {
+    marginLeft: 15,
+    marginRight: 15
+  },
+  textInput: {
+      borderWidth: 2,
+      borderColor: 'black',
+      paddingLeft: 10,
+      marginTop: 15,
+      height: 40
   }
 });
 

@@ -39,7 +39,7 @@ export function login(data:Object) {
   return dispatch => {
     dispatch(isLoading(true));
     return axios.post(
-      'https://register.pango.li/api/login',
+      'https://register.tamuhack.com/volunteer/login',
       {
          email: data.email,
          password: data.password,
