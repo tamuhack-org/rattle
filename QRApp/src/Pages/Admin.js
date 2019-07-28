@@ -86,7 +86,7 @@ class Admin extends Component<Props> {
         <Text h3 style={{ marginTop: '40%' }}>Scanner Home</Text>
         <ModalSelector
           data={this.events}
-          initValue="Select an event!"
+          initValue="Check In"
           onChange={(itemValue) => this.setState({ eventName: itemValue.label })}
           style={{ marginTop: 10 }}
           animationType='fade'

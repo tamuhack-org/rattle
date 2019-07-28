@@ -30,20 +30,21 @@ class QRScan extends Component<Props> {
     this.attribute = Object.prototype.hasOwnProperty.call(props, 'attribute') ? this.props.attribute : '';
 
     if (this.eventName === 'Check In') {
+      console.log("CHECKED IN MOFO!");
       this.eventType = 'checkin';
-    }
-
-    for (var i = 0; i < this.foodOptions.length; i++) {
-      console.log(this.foodOptions[i]);
-      if (this.foodOptions[i] === this.attribute) {
-        console.log('Food!');
-        this.eventType = 'food';
-        break;
+    }else{
+      for (var i = 0; i < this.foodOptions.length; i++) {
+        console.log(this.foodOptions[i]);
+        if (this.foodOptions[i] === this.attribute) {
+          console.log('Food!');
+          this.eventType = 'food';
+          break;
+        }
       }
     }
-    //this.authToken = Object.prototype.hasOwnProperty.call(props, 'userData') ? this.props.userData.data.token : '';
 
-    this.authToken = 'temp';
+    this.authToken = Object.prototype.hasOwnProperty.call(props, 'userData') ? this.props.userData.data.token : '';
+
     console.log(this.eventName);
     console.log(this.eventType);
     console.log(this.attribute);
@@ -67,8 +68,16 @@ class QRScan extends Component<Props> {
 
     if (this.authToken === '') {
       // Alert user to relog!
-      Alert.alert('No authentication token! Please relog!');
+      Alert.alert(
+          'QR Scanning Error',
+          'No authentication token! Please relog!',
+          [
+            { text: 'OK', onPress: () => this.scanner.reactivate() },
+          ],
+          { cancelable: false }
+        );
       console.log('No Auth Token!');
+
       return;
     }
 
@@ -76,8 +85,14 @@ class QRScan extends Component<Props> {
       jsonData = JSON.parse(scan.data);
     } catch (exception) {
       // Alert user
-      Alert.alert('Invalid QR Code. Json parsing failed');
-      console.log('Cant parse Json!');
+      Alert.alert(
+          'QR Scanning Error',
+          'Invalid QR Code. Json parsing failed',
+          [
+            { text: 'OK', onPress: () => this.scanner.reactivate() },
+          ],
+          { cancelable: false }
+        );
       return;
     }
 
@@ -85,8 +100,15 @@ class QRScan extends Component<Props> {
 
     if (!Object.prototype.hasOwnProperty.call(jsonData, 'email')) {
       // Alert user
-      Alert.alert('No email key in json! Invalid QR Code');
-      console.log('No email key in Json!');
+
+      Alert.alert(
+          'QR Scanning Error',
+          'No email key in json! Invalid QR Code',
+          [
+            { text: 'OK', onPress: () => this.scanner.reactivate() },
+          ],
+          { cancelable: false }
+        );
       return;
     }
 
@@ -97,6 +119,7 @@ class QRScan extends Component<Props> {
       console.log('Food');
       if (this.eventName === '' || this.attribute === '') {
         console.log('Either the Event name or the attribute was not correctly filled out! Try again!');
+        this.scanner.reactivate();
         return;
       }
 
@@ -128,7 +151,15 @@ class QRScan extends Component<Props> {
         }
         console.log(response);
       }).catch(error => {
-        console.log(error);
+        Alert.alert(
+            'API Request Error',
+            'API request failed!',
+            [
+              { text: 'OK', onPress: () => this.scanner.reactivate() },
+            ],
+            { cancelable: false }
+          );
+        return;
       });
 
     console.log(bodyObj);
@@ -143,7 +174,7 @@ class QRScan extends Component<Props> {
   }
 
   setModalVisible(visible) {
-    if (visible === false) {
+    if (visible === false && !this.state.searchManual) {
       this.scanner.reactivate();
     }
 
@@ -323,18 +354,19 @@ class QRScan extends Component<Props> {
                     ))
                 }
               </ScrollView>
-              <Modal
-                style={{ margin: 0, justifyContent: 'flex-end' }}
-                isVisible={this.state.modalVisible}
-                animationIn='slideInUp'
-                animationInTiming={500}
-                animationOut='slideOutDown'
-                animationOutTiming={500}
-              >
-                {this.renderModalContent()}
-              </Modal>
           </View>
         }
+
+        <Modal
+          style={{ margin: 0, justifyContent: 'flex-end' }}
+          isVisible={this.state.modalVisible}
+          animationIn='slideInUp'
+          animationInTiming={500}
+          animationOut='slideOutDown'
+          animationOutTiming={500}
+        >
+          {this.renderModalContent()}
+        </Modal>
 
       </View>
     );

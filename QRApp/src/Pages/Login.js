@@ -32,7 +32,7 @@ export class Login extends Component {
           <Text h3>Scanner Login</Text>
           <TextInput
               style={styles.textInput}
-              placeholder="Username"
+              placeholder="Email"
               onChangeText={(email) => this.setState({ email })}
               value={this.state.email}
           />
