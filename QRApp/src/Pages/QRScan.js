@@ -6,8 +6,10 @@
    Dimensions,
    Alert,
    TextInput,
-   ScrollView
+   ScrollView,
+   FlatList
  } from 'react-native';
+ import Toast from 'react-native-easy-toast';
  import { Button, Badge, Icon, ListItem } from 'react-native-elements';
  import QRCodeScanner from 'react-native-qrcode-scanner';
  import Modal from 'react-native-modal';
@@ -25,14 +27,16 @@ class QRScan extends Component<Props> {
     this.checkInStatusUrl = 'https://register.tamuhack.com/volunteer/checkin?email=';
     this.foodUrl = 'https://register.tamuhack.com/volunteer/food';
     this.workshopUrl = 'https://register.tamuhack.com/volunteer/workshops';
+    this.manualUrl = 'https://register.tamuhack.com/volunteer/search?q=';
     this.foodOptions = ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None'];
     this.eventName = Object.prototype.hasOwnProperty.call(props, 'eventName') ? this.props.eventName : '';
     this.attribute = Object.prototype.hasOwnProperty.call(props, 'attribute') ? this.props.attribute : '';
 
     if (this.eventName === 'Check In') {
-      console.log("CHECKED IN MOFO!");
       this.eventType = 'checkin';
-    }else{
+    } else if (this.eventName === 'Workshop') {
+      this.eventType = 'workshop';
+    } else {
       for (var i = 0; i < this.foodOptions.length; i++) {
         console.log(this.foodOptions[i]);
         if (this.foodOptions[i] === this.attribute) {
@@ -225,6 +229,7 @@ class QRScan extends Component<Props> {
             this.setModalVisible(false);
           });
         }
+        this.refs.toast.show('Success');
       }).catch(error => {
         if (error.response.status === 412) {
           Alert.alert('Person has not checked in! Please contact a director.');
@@ -235,6 +240,92 @@ class QRScan extends Component<Props> {
       });
 
       this.setModalVisible(false);
+  }
+
+  manualGet(username) {
+    if (username === '') {
+      return;
+    }
+    const authToken = 'Token ' + this.authToken;
+    const searchUrl = this.manualUrl + username;
+
+    axios.get(
+      searchUrl,
+      {
+        headers: {
+          'content-type': 'application/json',
+          authorization: authToken
+        }
+      }
+    ).then(response => {
+      this.setState({ list: response.data.results });
+    }).catch(error => {
+      Alert.alert('Error occured with manual search!');
+    });
+  }
+
+  async sendManualRequest(listItem) {
+    const bodyObj = {};
+
+    bodyObj.email = listItem.email;
+    bodyObj.eventRequest = this.eventType;
+
+    if (this.eventType === 'food') {
+      console.log('Food');
+      if (this.eventName === '' || this.attribute === '') {
+        console.log('Either the Event name or the attribute was not correctly filled out! Try again!');
+        return;
+      }
+
+      bodyObj.meal = this.props.eventName;
+      bodyObj.restrictions = this.props.attribute;
+      bodyObj.eventRequest = 'food';
+    }
+
+    if (this.eventName === 'Check In') {
+      bodyObj.eventRequest = 'checkin';
+    }
+
+    if (this.eventName === 'Workshop') {
+      bodyObj.eventRequest = 'workshop';
+    }
+
+    let checkedIn = false;
+
+    await axios.get(
+        this.checkInStatusUrl + '' + bodyObj.email,
+        {
+           headers: {
+             'content-type': 'application/json',
+             authorization: 'Token ' + this.authToken
+           }
+        }
+      ).then(response => {
+        if (response.data.checked_in) {
+          checkedIn = true;
+        }
+        console.log(response);
+      }).catch(error => {
+        Alert.alert(
+            'API Request Error',
+            'API request failed!',
+            [
+              { text: 'OK', onPress: () => this.scanner.reactivate() },
+            ],
+            { cancelable: false }
+          );
+        return;
+      });
+
+    console.log(bodyObj);
+    this.setState({
+      requestBody: bodyObj,
+      boolCheckedIn: checkedIn,
+      email: listItem.email,
+      firstName: listItem.first_name,
+      lastName: listItem.last_name }, () => {
+      this.setModalVisible(true);
+    });
   }
 
   renderModalContent = () => (
@@ -256,6 +347,7 @@ class QRScan extends Component<Props> {
            value={this.eventName}
         />
         {this.eventType !== 'checkin' &&
+         this.eventType !== 'workshop' &&
          this.eventType !== '' &&
           <Badge
              textStyle={{ fontSize: 15, color: 'black' }}
@@ -329,31 +421,32 @@ class QRScan extends Component<Props> {
             <TextInput
                   style={styles.textInput}
                   placeholder="Search User by Name"
-                  onChangeText={(username) => this.setState({ username })}
-                  value={this.state.username}
+                  onChangeText={(manualUsername) => this.setState({ manualUsername })}
+                  value={this.state.manualUsername}
             />
-              <Button
-                  containerStyle={{ marginTop: 15, marginBottom: 30 }}
-                  buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
-                  titleStyle={{ color: 'black', fontSize: 18 }}
-                  title="Search User"
-                  type="outline"
-              />
-              <ScrollView
-                style={{ display: 'flex', height: 600 }}
-              >
+            <Button
+                containerStyle={{ marginTop: 15, marginBottom: 30 }}
+                buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
+                titleStyle={{ color: 'black', fontSize: 18 }}
+                title="Search User"
+                type="outline"
+                onPress={() => this.manualGet(this.state.manualUsername)}
+            />
+            <View style={{ display: 'flex', height: '70%', bottom: 20 }}>
+              <ScrollView>
                 {
                     list.map((l, i) => (
                         <ListItem
                             key={i}
                             rightIcon={{ name: 'add' }}
-                            title={l}
-                            titleStyle={{ width: '78%' }}
-                            onPress={() => console.log('Icon Pressed')}
+                            title={l.first_name + ' ' + l.last_name + '\n' + l.email}
+                            titleStyle={{ width: '85%' }}
+                            onPress={() => this.sendManualRequest(l)}
                         />
                     ))
                 }
               </ScrollView>
+            </View>
           </View>
         }
 
@@ -367,6 +460,12 @@ class QRScan extends Component<Props> {
         >
           {this.renderModalContent()}
         </Modal>
+        <Toast
+        ref="toast"
+        defaultCloseDelay={3000}
+        style={{ display: 'flex', width: 200, height: 50, backgroundColor:'#5CD059', justifyContent: 'center', alignItems: 'center' }}
+        textStyle={{ fontSize: 20 }}
+        />
 
       </View>
     );

@@ -13,6 +13,7 @@
     "react-native": "0.59.9",
     "react-native-camera": "^2.11.0",
     "react-native-dropdown-menu": "^2.0.0",
+    "react-native-easy-toast": "^1.2.0",
     "react-native-elements": "^1.1.0",
     "react-native-linear-gradient": "^2.5.4",
     "react-native-modal": "^11.1.0",
