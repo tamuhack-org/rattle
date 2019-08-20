@@ -103,7 +103,7 @@ class Admin extends Component<Props> {
             animationType='fade'
           />
         }
-
+        
         <Button
           containerStyle={{ marginTop: 15 }}
           buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
@@ -125,7 +125,7 @@ class Admin extends Component<Props> {
         />
 
         <Modal
-          style={{ margin: 0, justifyContent: 'flex-end', height: 400 }}
+          style={{ margin: 0, justifyContent: 'flex-end', height: 1000 }}
           isVisible={this.state.modalVisible}
           animationIn='slideInUp'
           animationInTiming={500}
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
       paddingLeft: '5%',
       paddingRight: '5%',
       paddingTop: 50,
-      height: '60%',
+      height: '80%',
       backgroundColor: 'white'
     },
 });

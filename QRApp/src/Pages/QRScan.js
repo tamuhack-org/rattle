@@ -29,8 +29,11 @@ class QRScan extends Component<Props> {
     this.workshopUrl = 'https://register.tamuhack.com/volunteer/workshops';
     this.manualUrl = 'https://register.tamuhack.com/volunteer/search?q=';
     this.foodOptions = ['Vegan', 'Vegetarian', 'Halal', 'Kosher', 'Food Allergies', 'None'];
+
     this.eventName = Object.prototype.hasOwnProperty.call(props, 'eventName') ? this.props.eventName : '';
     this.attribute = Object.prototype.hasOwnProperty.call(props, 'attribute') ? this.props.attribute : '';
+
+    console.log(this.eventName);
 
     if (this.eventName === 'Check In') {
       this.eventType = 'checkin';
@@ -334,7 +337,7 @@ class QRScan extends Component<Props> {
         name='times'
         type='font-awesome'
         color='#f50'
-        containerStyle={{ position: 'absolute', right: 20, top: 20 }}
+        containerStyle={{ position: 'absolute', zIndex: 100, right: 10, top: 10 }}
         iconStyle={{ color: 'black' }}
         hitSlop={{ top: 40, bottom: 40, left: 40, right: 40 }}
         onPress={() => this.setModalVisible(false)}
@@ -366,7 +369,7 @@ class QRScan extends Component<Props> {
         <Text style={{ fontSize: 25 }}>{this.state.boolCheckedIn ? 'Checked In' : 'Not Checked In'}</Text>
       </View>
       <View style={styles.emailRow}>
-        <Text style={{ fontSize: 16, fontWeight: 'bold' }} >Emails</Text>
+        <Text style={{ fontSize: 16, fontWeight: 'bold' }} >Email</Text>
         <Text style={{ fontSize: 16 }} >{this.state.email}</Text>
       </View>
       <Button
@@ -374,6 +377,7 @@ class QRScan extends Component<Props> {
       disabled={this.state.boolCheckedIn && this.state.requestBody.eventRequest === 'checkin'}
       buttonStyle={{ display: 'flex', flex: 1, padding: 25, height: 150, justifyContent: 'center', alignItems: 'center' }}
       title={this.state.requestBody.eventRequest === 'checkin' ? 'Check In' : 'Event Check In'}
+      text={this.state.requestBody.eventRequest === 'checkin' ? 'Check In' : 'Event Check In'}
       />
     </View>
   );
@@ -387,7 +391,8 @@ class QRScan extends Component<Props> {
         <View style={styles.topContent}>
           <Button
           onPress={() => Actions.replace('admin')}
-          containerStyle={{ display: 'flex', width: '70%' }} title="Back to Scanning Selection"
+          containerStyle={{ display: 'flex', width: '70%' }}
+          title="Back to Scanning Selection"
           buttonStyle={{ backgroundColor: '#C8C8C8', borderColor: '#C8C8C8' }}
           type='outline'
           titleStyle={{ color: 'black', fontSize: 18 }}
@@ -449,17 +454,16 @@ class QRScan extends Component<Props> {
             </View>
           </View>
         }
-
-        <Modal
-          style={{ margin: 0, justifyContent: 'flex-end' }}
-          isVisible={this.state.modalVisible}
-          animationIn='slideInUp'
-          animationInTiming={500}
-          animationOut='slideOutDown'
-          animationOutTiming={500}
-        >
-          {this.renderModalContent()}
-        </Modal>
+          <Modal
+            style={{ margin: 0, justifyContent: 'flex-end' }}
+            isVisible={this.state.modalVisible}
+            animationIn='slideInUp'
+            animationInTiming={500}
+            animationOut='slideOutDown'
+            animationOutTiming={500}
+          >
+            {this.renderModalContent()}
+          </Modal>
         <Toast
         ref="toast"
         defaultCloseDelay={3000}
