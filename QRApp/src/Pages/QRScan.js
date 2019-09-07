@@ -66,6 +66,7 @@ class QRScan extends Component<Props> {
     email: 'None',
     boolCheckedIn: false,
     searchManual: false,
+    backCamera: true,
     list: []
   }
 
@@ -179,6 +180,8 @@ class QRScan extends Component<Props> {
       this.setModalVisible(true);
     });
   }
+
+
 
   setModalVisible(visible) {
     if (visible === false && !this.state.searchManual) {
@@ -369,7 +372,7 @@ class QRScan extends Component<Props> {
         <Text style={{ fontSize: 25 }}>{this.state.boolCheckedIn ? 'Checked In' : 'Not Checked In'}</Text>
       </View>
       <View style={styles.emailRow}>
-        <Text style={{ fontSize: 16, fontWeight: 'bold' }} >Email</Text>
+        <Text style={{ fontSize: 16, fontWeight: 'bold', width: 150 }} >Email</Text>
         <Text style={{ fontSize: 16 }} >{this.state.email}</Text>
       </View>
       <Button
@@ -385,6 +388,7 @@ class QRScan extends Component<Props> {
   render() {
     const manual = this.state.searchManual;
     const list = this.state.list;
+    const back = this.state.backCamera;
     console.log('Checked In ' + this.state.boolCheckedIn);
     return (
       <View style={{ display: 'flex', height: '100%' }}>
@@ -405,6 +409,14 @@ class QRScan extends Component<Props> {
           title={!manual ? 'Search Manually' : 'Scan QR'}
           onPress={() => this.setManualVisible(!manual)}
           />
+          <Button
+          containerStyle={{ display: 'flex', width: '50%', marginTop: 10 }}
+          type='outline'
+          buttonStyle={{ borderColor: '#C8C8C8', borderWidth: 4 }}
+          titleStyle={{ color: 'black', fontSize: 13 }}
+          title="Change Camera Orientation"
+          onPress={() => this.setState({ backCamera: !this.state.backCamera })}
+          />
         </View>
         {
           !this.state.searchManual &&
@@ -412,10 +424,11 @@ class QRScan extends Component<Props> {
             <QRCodeScanner
               ref={(node) => { this.scanner = node; }}
               onRead={this.onQRRead.bind(this)}
-              cameraType='back'
+              cameraType={back ? 'back' : 'front'}
               cameraStyle={{ height: Dimensions.get('window').height }}
               topViewStyle={{ height: 0, flex: 0 }}
               bottomViewStyle={{ height: 0, flex: 0 }}
+              onPress={() => console.log("Clicking!")}
             />
           </React.Fragment>
         }
@@ -480,7 +493,7 @@ const styles = StyleSheet.create({
   topContent: {
     display: 'flex',
     flexDirection: 'column',
-    height: 100,
+    height: 170,
     alignItems: 'center',
     justifyContent: 'space-around',
     marginTop: 30,
