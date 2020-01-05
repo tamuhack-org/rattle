@@ -1,8 +1,8 @@
 import React from 'react';
 import { HashRouter, Switch, Route, Router } from 'react-router-dom';
-import Login from './Pages/Login/Login';
-import QRScan from './Pages/QRScan/QRScan';
-import Selection from './Pages/Selection/Selection';
+import Login from './Login/Login';
+import QRScan from './QRScan/QRScan';
+import Selection from './Selection/Selection';
 
 class Routes extends React.Component {
   render() {
