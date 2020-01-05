@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route, Router } from 'react-router-dom';
+import { HashRouter, Switch, Route, Router } from 'react-router-dom';
 import Login from './Pages/Login/Login';
 import QRScan from './Pages/QRScan/QRScan';
 import Selection from './Pages/Selection/Selection';
@@ -7,12 +7,12 @@ import Selection from './Pages/Selection/Selection';
 class Routes extends React.Component {
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter basename='/'>
         <Switch>
-          <Route path={process.env.PUBLIC_URL + '/test'} component={Selection} />
-          <Route path={process.env.PUBLIC_URL + '/'} component={Login} />
+          <Route path={'/test'} component={Selection} />
+          <Route path={'/'} component={Login} />
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
