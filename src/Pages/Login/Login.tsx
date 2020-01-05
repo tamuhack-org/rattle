@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/actions/authActions';
 import { LoginData } from '../../types/LoginType';
+import { Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface IProps {
@@ -18,6 +19,7 @@ interface IState {
   email: string;
   password: string;
   submitColor: string;
+  redirectToSelection: boolean;
 }
 
 class Login extends React.PureComponent<IProps, IState> {
@@ -26,7 +28,7 @@ class Login extends React.PureComponent<IProps, IState> {
 
     this.emailHandler = this.emailHandler.bind(this);
     this.passwordHandler = this.passwordHandler.bind(this);
-    this.state = {email: "", password: "", submitColor: '#FF7C93'};
+    this.state = {email: "", password: "", submitColor: '#FF7C93', redirectToSelection: false};
   }
 
   login() {
@@ -36,7 +38,7 @@ class Login extends React.PureComponent<IProps, IState> {
         console.log(this.props);
       } else {
         // Switch to next Apply screen
-        console.log(this.props.userData.data.token);
+        this.setState({ redirectToSelection: true });
       }
     });
   }
@@ -50,6 +52,12 @@ class Login extends React.PureComponent<IProps, IState> {
   }
 
   render() {
+    const { redirectToSelection } = this.state;
+
+    if(redirectToSelection) {
+      return <Redirect to='/test' />
+    }
+
     return (
       <div style={style.pageContainer}>
         <form style={style.formContainer}>
