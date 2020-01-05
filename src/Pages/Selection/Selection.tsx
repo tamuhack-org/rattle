@@ -22,7 +22,7 @@ class Selection extends React.PureComponent<IProps, IState> {
   render() {
     return (
       <div style={style.pageContainer}>
-
+        Hello!
       </div>
     );
   }
@@ -38,8 +38,8 @@ const style : { [key: string]: React.CSSProperties } = {
 };
 
 const mapStateToProps = state => ({
-  event: state.selection.eventName,
-  attribute: state.selection.attribute,
+  /*event: state.selection.eventName,
+  attribute: state.selection.attribute,*/
 });
 
 const mapDispatchToProps = dispatch => ({

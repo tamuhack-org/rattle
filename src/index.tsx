@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import Routes from './Routes';
 import Login from './Pages/Login/Login';
 import * as serviceWorker from './serviceWorker';
 
@@ -10,7 +11,7 @@ import store from './redux/store';
 const ReduxApp = () => {
   return (
     <Provider store={store}>
-      <Login />
+      <Routes />
     </Provider>
   )
 }
