@@ -9,8 +9,8 @@ class Routes extends React.Component {
     return (
       <HashRouter basename='/'>
         <Switch>
-          <Route path={'/test'} component={Selection} />
-          <Route path={'/'} component={QRScan} />
+          <Route path={'/select'} component={Selection} />
+          <Route path={'/'} component={Login} />
         </Switch>
       </HashRouter>
     );
