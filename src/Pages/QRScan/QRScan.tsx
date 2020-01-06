@@ -1,6 +1,7 @@
 import React from 'react';
 import QrReader from 'react-qr-reader';
 import { LoginData } from '../../types/LoginType';
+import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -39,6 +40,11 @@ class QRScan extends React.PureComponent<IProps, IState> {
   switchCamera() {
     console.log(!this.state.frontCamera);
     this.setState({frontCamera: !this.state.frontCamera});
+  }
+
+  componentWillMount() {
+    console.log("NEW SHIT!!");
+    console.log(this.props);
   }
 
   render() {
@@ -87,4 +93,9 @@ const style : { [key: string]: React.CSSProperties } = {
   }
 };
 
-export default QRScan;
+const mapStateToProps = state => ({
+  event: state.selection.event,
+  attribute: state.selection.attribute,
+});
+
+export default connect(mapStateToProps)(QRScan);

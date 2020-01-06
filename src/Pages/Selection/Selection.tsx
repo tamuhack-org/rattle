@@ -1,20 +1,25 @@
 import React from 'react';
 import QrReader from 'react-qr-reader';
+import { Redirect } from 'react-router-dom';
+import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { AppActions } from '../../types/actions';
 import * as actions from '../../redux/actions/selectionActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 
+
 interface IProps {
   event: string;
   attribute: string;
-  updateSelection: (event: string, attribute:string) => void;
+  updateSelection: (event: string, attribute: string) => Dispatch<AppActions>;
 }
 
 interface IState {
   event: string;
   attribute: string;
+  redirectToScan: boolean;
 }
 
 class Selection extends React.PureComponent<IProps, IState> {
@@ -23,7 +28,8 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     this.state = {
       event: "",
-      attribute: ""
+      attribute: "",
+      redirectToScan: false,
     }
   }
 
@@ -56,9 +62,10 @@ class Selection extends React.PureComponent<IProps, IState> {
   }
 
   handleScanSubmit = () => {
+    // TODO may have to change logic depending on Event and Attribute
     if(this.state.event && this.state.attribute) {
-      // TODO
       this.props.updateSelection(this.state.event, this.state.attribute);
+      this.setState({ redirectToScan: true });
     }
 
     // TODO Alert user about invalid selection
@@ -67,8 +74,13 @@ class Selection extends React.PureComponent<IProps, IState> {
   render() {
     var {
       event,
-      attribute
+      attribute,
+      redirectToScan
     } = this.state;
+
+    if(redirectToScan) {
+      return <Redirect to='/scan' />
+    }
 
     // Hardcoded event options. Will need to be updated
     const eventOptions = [
