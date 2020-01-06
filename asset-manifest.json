@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.js": "/rattle/static/js/main.77bb2ded.chunk.js",
-    "main.js.map": "/rattle/static/js/main.77bb2ded.chunk.js.map",
+    "main.js": "/rattle/static/js/main.5ff44c77.chunk.js",
+    "main.js.map": "/rattle/static/js/main.5ff44c77.chunk.js.map",
     "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
     "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
     "static/css/2.17e5ed98.chunk.css": "/rattle/static/css/2.17e5ed98.chunk.css",
-    "static/js/2.8766ae43.chunk.js": "/rattle/static/js/2.8766ae43.chunk.js",
-    "static/js/2.8766ae43.chunk.js.map": "/rattle/static/js/2.8766ae43.chunk.js.map",
+    "static/js/2.0f1888fd.chunk.js": "/rattle/static/js/2.0f1888fd.chunk.js",
+    "static/js/2.0f1888fd.chunk.js.map": "/rattle/static/js/2.0f1888fd.chunk.js.map",
     "index.html": "/rattle/index.html",
-    "precache-manifest.ed62fda42458e98b8b5e061f4ca16f20.js": "/rattle/precache-manifest.ed62fda42458e98b8b5e061f4ca16f20.js",
+    "precache-manifest.3f93b10ff28c0c933b65f705e4af0551.js": "/rattle/precache-manifest.3f93b10ff28c0c933b65f705e4af0551.js",
     "service-worker.js": "/rattle/service-worker.js",
     "static/css/2.17e5ed98.chunk.css.map": "/rattle/static/css/2.17e5ed98.chunk.css.map",
-    "static/js/2.8766ae43.chunk.js.LICENSE": "/rattle/static/js/2.8766ae43.chunk.js.LICENSE"
+    "static/js/2.0f1888fd.chunk.js.LICENSE": "/rattle/static/js/2.0f1888fd.chunk.js.LICENSE"
   },
   "entrypoints": [
     "static/js/runtime-main.601eb6f8.js",
     "static/css/2.17e5ed98.chunk.css",
-    "static/js/2.8766ae43.chunk.js",
-    "static/js/main.77bb2ded.chunk.js"
+    "static/js/2.0f1888fd.chunk.js",
+    "static/js/main.5ff44c77.chunk.js"
   ]
 }
