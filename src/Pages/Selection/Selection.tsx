@@ -1,7 +1,7 @@
 import React from 'react';
 import QrReader from 'react-qr-reader';
 import { connect } from 'react-redux';
-import * as actions from '../../redux/actions/authActions';
+import * as actions from '../../redux/actions/selectionActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 interface IProps {
   event: string;
   attribute: string;
+  updateSelection: (event: string, attribute:string) => void;
 }
 
 interface IState {
@@ -26,7 +27,7 @@ class Selection extends React.PureComponent<IProps, IState> {
     }
   }
 
-  
+
   // Gets called every time the first select form has an option change.
   eventSelectChange = (option, actions) => {
     var val = option ? option.value : "";
@@ -43,7 +44,7 @@ class Selection extends React.PureComponent<IProps, IState> {
     })
   }
 
-  // Using the event state determine what options to return. 
+  // Using the event state determine what options to return.
   // These will be displayed on the second dropdown
   determineAttributes = () => {
     // TODO
@@ -57,8 +58,10 @@ class Selection extends React.PureComponent<IProps, IState> {
   handleScanSubmit = () => {
     if(this.state.event && this.state.attribute) {
       // TODO
-      console.log('Sending a POST request ...')
+      this.props.updateSelection(this.state.event, this.state.attribute);
     }
+
+    // TODO Alert user about invalid selection
   }
 
   render() {
@@ -113,7 +116,7 @@ class Selection extends React.PureComponent<IProps, IState> {
           isSearchable={ false }
         />
         <br />
-        
+
         <Button block
           style={{border: "1px solid #FF7C93", backgroundColor: "#FF7C93"}}
           onClick={this.handleScanSubmit}
@@ -158,12 +161,12 @@ const style : { [key: string]: React.CSSProperties } = {
 };
 
 const mapStateToProps = state => ({
-  /*event: state.selection.eventName,
-  attribute: state.selection.attribute,*/
+  event: state.selection.event,
+  attribute: state.selection.attribute,
 });
 
 const mapDispatchToProps = dispatch => ({
-  /*login: (email:string, password:string) => dispatch(actions.login(email, password))*/
+  updateSelection: (event:string, attribute:string) => dispatch(actions.updateSelection(event, attribute))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Selection);

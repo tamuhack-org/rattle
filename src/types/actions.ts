@@ -31,4 +31,14 @@ export interface LoginFailedAction {
 
 export type AuthActionTypes = LoginAction | LogoutAction | LoginAttemptAction | LoginSuccessAction | LoginFailedAction;
 
-export type AppActions = AuthActionTypes;
+export const SELECTION_SUCCESS = "SELECTION_SUCCESS";
+
+export interface SelectionSuccessAction {
+  type: typeof SELECTION_SUCCESS;
+  event: string;
+  attribute: string;
+}
+
+export type SelectionActionTypes = SelectionSuccessAction;
+
+export type AppActions = AuthActionTypes | SelectionActionTypes;
