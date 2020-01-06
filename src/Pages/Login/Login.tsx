@@ -55,7 +55,7 @@ class Login extends React.PureComponent<IProps, IState> {
     const { redirectToSelection } = this.state;
 
     if(redirectToSelection) {
-      return <Redirect to='/test' />
+      return <Redirect to='/select' />
     }
 
     return (
