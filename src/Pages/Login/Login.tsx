@@ -6,6 +6,8 @@ import * as actions from '../../redux/actions/authActions';
 import { LoginData } from '../../types/LoginType';
 import { Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import {generateToast} from './../../Components/toast';
+import Toast from './../../Components/toast';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -20,6 +22,10 @@ interface IState {
   password: string;
   submitColor: string;
   redirectToSelection: boolean;
+
+  // Added state for the toast
+  loginFailed: boolean;
+  currentToastID: number;
 }
 
 class Login extends React.PureComponent<IProps, IState> {
@@ -28,7 +34,7 @@ class Login extends React.PureComponent<IProps, IState> {
 
     this.emailHandler = this.emailHandler.bind(this);
     this.passwordHandler = this.passwordHandler.bind(this);
-    this.state = {email: "", password: "", submitColor: '#FF7C93', redirectToSelection: false};
+    this.state = {email: "", password: "", submitColor: '#FF7C93', redirectToSelection: false, loginFailed: false, currentToastID:0};
   }
 
   login() {
@@ -36,6 +42,15 @@ class Login extends React.PureComponent<IProps, IState> {
       if(this.props.error) {
         // Alert user about error
         console.log(this.props);
+
+        // Create a new toast by toggling the state
+        this.setState({
+          loginFailed: true,
+
+          // Toasts need a unique ID to know when to render
+          currentToastID: this.state.currentToastID + 1
+        })
+
       } else {
         // Switch to next Apply screen
         this.setState({ redirectToSelection: true });
@@ -53,10 +68,14 @@ class Login extends React.PureComponent<IProps, IState> {
 
   render() {
     const { redirectToSelection } = this.state;
+    // const failToast = generateToast("warning", "Failed");
 
     if(redirectToSelection) {
       return <Redirect to='/test' />
     }
+
+    // Create the failure toast
+    let failureToast = (this.state.loginFailed) ? (<Toast type="error" text="Failed to login." id={this.state.currentToastID}/>) : undefined;
 
     return (
       <div style={style.pageContainer}>
@@ -82,12 +101,17 @@ class Login extends React.PureComponent<IProps, IState> {
             onChange={this.passwordHandler}
             style={style.inputContainer}
           />
+
           <Button
             onClick={() => this.login()}
             style={{...style.submitContainer, backgroundColor: this.state.submitColor}}
           >
             Login
           </Button>
+
+          {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
+          {failureToast}
+
         </form>
       </div>
     );
