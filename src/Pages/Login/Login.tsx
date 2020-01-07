@@ -68,7 +68,6 @@ class Login extends React.PureComponent<IProps, IState> {
 
   render() {
     const { redirectToSelection } = this.state;
-    // const failToast = generateToast("warning", "Failed");
 
     if(redirectToSelection) {
       return <Redirect to='/test' />

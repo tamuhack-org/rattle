@@ -7,12 +7,9 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ReduxApp = () => {
-  // toast.configure()
-
   return (
     <Provider store={store}>
       <Routes />
