@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from 'react-bootstrap/Navbar'
 import QrReader from 'react-qr-reader';
 import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
@@ -28,12 +29,12 @@ class Login extends React.PureComponent<IProps, IState> {
 
     this.emailHandler = this.emailHandler.bind(this);
     this.passwordHandler = this.passwordHandler.bind(this);
-    this.state = {email: "", password: "", submitColor: '#FF7C93', redirectToSelection: false};
+    this.state = { email: "", password: "", submitColor: '#FF7C93', redirectToSelection: false };
   }
 
   login() {
     this.props.login(this.state.email, this.state.password).then(() => {
-      if(this.props.error) {
+      if (this.props.error) {
         // Alert user about error
         console.log(this.props);
       } else {
@@ -54,53 +55,96 @@ class Login extends React.PureComponent<IProps, IState> {
   render() {
     const { redirectToSelection } = this.state;
 
-    if(redirectToSelection) {
+    if (redirectToSelection) {
       return <Redirect to='/select' />
     }
 
     return (
-      <div style={style.pageContainer}>
-        <form style={style.formContainer}>
-          <div style={style.titleContainer}>
+      <div>
+        <Navbar>
+          <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
             <img
-              style={style.logoContainer}
-              src={require("../../assets/hiss.svg")}
+              alt=""
+              src={require("../../assets/arrow.svg")}
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+            />{' '}
+          </Navbar.Brand>
+
+
+          <Navbar className="ml-auto">
+            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
+              <img
+                alt=""
+                src={require("../../assets/hiss.svg")}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+              />{' '}
+            </Navbar.Brand>
+          </Navbar>
+
+
+          <Navbar className="ml-auto">
+            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
+              <img
+                alt=""
+                src={require("../../assets/magnifying.svg")}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+              />{' '}
+            </Navbar.Brand>
+          </Navbar>
+
+        </Navbar>
+
+        <div style={style.pageContainer}>
+          <form style={style.formContainer}>
+
+            <div style={style.titleContainer}>
+
+              <img
+                style={style.logoContainer}
+                src={require("../../assets/hiss.svg")}
+              />
+              <p style={{ fontSize: '18px' }}>by tamuhack</p>
+            </div>
+            <input
+              type='text'
+              placeholder='Email'
+              value={this.state.email}
+              onChange={this.emailHandler}
+              style={style.inputContainer}
             />
-            <p style={{ fontSize: '18px' }}>by tamuhack</p>
-          </div>
-          <input
-            type='text'
-            placeholder='Email'
-            value={this.state.email}
-            onChange={this.emailHandler}
-            style={style.inputContainer}
-          />
-          <input
-            type='password'
-            placeholder='Password'
-            value={this.state.password}
-            onChange={this.passwordHandler}
-            style={style.inputContainer}
-          />
-          <Button
-            onClick={() => this.login()}
-            style={{...style.submitContainer, backgroundColor: this.state.submitColor}}
-          >
-            Login
+            <input
+              type='password'
+              placeholder='Password'
+              value={this.state.password}
+              onChange={this.passwordHandler}
+              style={style.inputContainer}
+            />
+            <Button
+              onClick={() => this.login()}
+              style={{ ...style.submitContainer, backgroundColor: this.state.submitColor }}
+            >
+              Login
           </Button>
-        </form>
+          </form>
+        </div>
       </div>
     );
   }
 }
 
-const style : { [key: string]: React.CSSProperties } = {
-  logoContainer : {
+const style: { [key: string]: React.CSSProperties } = {
+  logoContainer: {
     display: 'flex',
     marginLeft: '-10px',
     height: '56px'
   },
-  pageContainer : {
+  pageContainer: {
     display: 'flex',
     height: '100vh',
     width: '100vw',
@@ -144,7 +188,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  login: (email:string, password:string) => dispatch(actions.login(email, password))
+  login: (email: string, password: string) => dispatch(actions.login(email, password))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
