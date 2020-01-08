@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from 'react-bootstrap/Navbar'
 import QrReader from 'react-qr-reader';
 import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
@@ -7,6 +6,7 @@ import * as actions from '../../redux/actions/authActions';
 import { LoginData } from '../../types/LoginType';
 import { Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from 'react-bootstrap/Navbar'
 
 interface IProps {
   isLoggedIn: boolean;
@@ -61,44 +61,6 @@ class Login extends React.PureComponent<IProps, IState> {
 
     return (
       <div>
-        <Navbar>
-          <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
-            <img
-              alt=""
-              src={require("../../assets/arrow.svg")}
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-            />{' '}
-          </Navbar.Brand>
-
-
-          <Navbar className="ml-auto">
-            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
-              <img
-                alt=""
-                src={require("../../assets/hiss.svg")}
-                width="30"
-                height="30"
-                className="d-inline-block align-top"
-              />{' '}
-            </Navbar.Brand>
-          </Navbar>
-
-
-          <Navbar className="ml-auto">
-            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
-              <img
-                alt=""
-                src={require("../../assets/magnifying.svg")}
-                width="30"
-                height="30"
-                className="d-inline-block align-top"
-              />{' '}
-            </Navbar.Brand>
-          </Navbar>
-
-        </Navbar>
 
         <div style={style.pageContainer}>
           <form style={style.formContainer}>

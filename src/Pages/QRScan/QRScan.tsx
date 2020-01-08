@@ -4,6 +4,7 @@ import { LoginData } from '../../types/LoginType';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from 'react-bootstrap/Navbar'
 
 interface IProps {
   isLoggedIn: boolean;
@@ -50,6 +51,45 @@ class QRScan extends React.PureComponent<IProps, IState> {
   render() {
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
     return (
+      <div>
+        <Navbar>
+          <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
+            <img
+              alt=""
+              src={require("../../assets/arrowleft.svg")}
+              width="30"
+              height="30"
+              className="d-inline-block align-top"
+            />{' '}
+          </Navbar.Brand>
+
+
+          <Navbar className="ml-auto">
+            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
+              <img
+                alt=""
+                src={require("../../assets/hiss.svg")}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+              />{' '}
+            </Navbar.Brand>
+          </Navbar>
+
+
+          <Navbar className="ml-auto">
+            <Navbar.Brand href="https://en.wikipedia.org/wiki/Special:Random">
+              <img
+                alt=""
+                src={require("../../assets/magnifying.svg")}
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+              />{' '}
+            </Navbar.Brand>
+          </Navbar>
+
+        </Navbar>
       <div style={style.pageContainer}>
         <div style={style.selectionContainer}>
           <Button style={{width: '40vw', height: '5vh'}}>Event</Button>
@@ -68,6 +108,8 @@ class QRScan extends React.PureComponent<IProps, IState> {
           facingMode={cameraString}
         />
       </div>
+      </div>
+
     );
   }
 }
