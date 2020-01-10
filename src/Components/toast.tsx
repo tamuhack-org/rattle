@@ -17,7 +17,7 @@ import React from 'react';
 // Arguments every toast will have.
 var commonArgs : object = {
     position: "bottom-center",
-    autoClose: 2000,
+    autoClose: 1500,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -28,6 +28,7 @@ interface IProps {
     type: string;
     text: string;
     id: number;
+    callback?: any;
 }
 
 interface IState {}
@@ -41,8 +42,15 @@ class Toast extends React.PureComponent<IProps, IState> {
   generateToast = () => {
     var {
         type,
-        text
+        text,
+        callback
     } = this.props
+
+
+    // var commonArgsModified = JSON.parse(JSON.stringify(commonArgs));
+
+    // if(this.state.callback)
+    commonArgs["onClose"] = callback;
 
     var cases = {
         "info": () => toast.info(text, commonArgs),
@@ -52,6 +60,7 @@ class Toast extends React.PureComponent<IProps, IState> {
     }
 
     var key = type.toLocaleLowerCase();
+
 
     // Check if key one of the valid ones above, or return default toast (white background)
     return (key in cases) ? cases[key] : () => toast(text, commonArgs)
