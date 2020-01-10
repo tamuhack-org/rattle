@@ -94,11 +94,11 @@ class Login extends React.PureComponent<IProps, IState> {
 
     if(redirectToSelection) {
       return (
-        <Redirect to='/test'/>
+        <Redirect to='/search'/>
       )
     }
 
-    // Create the failure toast
+    // Create the success and failure toast
     let failureToast = (this.state.loginFailed) ? (
       <Toast type="error" text={this.state.toastText} id={this.state.currentToastID}/>
     ) : undefined;
