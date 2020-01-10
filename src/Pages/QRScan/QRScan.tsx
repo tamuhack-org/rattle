@@ -10,6 +10,8 @@ interface IProps {
   isLoading: boolean;
   userData: LoginData;
   error: string;
+  event: string;
+  attribute: string;
   login: (email: string, password: string) => Promise<object>;
 }
 
@@ -38,13 +40,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
   }
 
   switchCamera() {
-    console.log(!this.state.frontCamera);
     this.setState({frontCamera: !this.state.frontCamera});
-  }
-
-  componentWillMount() {
-    console.log("NEW SHIT!!");
-    console.log(this.props);
   }
 
   render() {
@@ -52,8 +48,8 @@ class QRScan extends React.PureComponent<IProps, IState> {
     return (
       <div style={style.pageContainer}>
         <div style={style.selectionContainer}>
-          <Button style={{width: '40vw', height: '5vh'}}>Event</Button>
-          <Button style={{width: '40vw', height: '5vh'}}>Attribute</Button>
+          <Button style={{width: '40vw', height: '5vh'}}>{this.props.event}</Button>
+          <Button style={{width: '40vw', height: '5vh'}}>{this.props.attribute}</Button>
         </div>
         <Button
           style={style.switchCameraContainer}
