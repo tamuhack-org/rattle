@@ -11,8 +11,6 @@ import axios from 'axios';
 import { throwStatement } from '@babel/types';
 import Toast from './../../Components/toast';
 
-
-
 interface IProps {
   event: string;
   token: number
@@ -32,7 +30,6 @@ interface IState {
     searchSuccess: boolean;
     currentToastID: number;
     toastText: string;
-
 }
 
 class Selection extends React.PureComponent<IProps, IState> {
@@ -43,6 +40,7 @@ class Selection extends React.PureComponent<IProps, IState> {
         event: "",
         attribute: "",
         name: "",
+
         displayUsers: false,
         users: [],
         searchFailed: false, 
@@ -91,11 +89,13 @@ class Selection extends React.PureComponent<IProps, IState> {
     })
   }
 
+  // TODO
   handlePopup = (user) => {
-    // TODO
     console.log(user)
   }
 
+  // Calls the api/volunteer/search endpoint
+  // NOTE: There is no hard cap or limit checking. A person can type " " and get every user for instance
   handleSearchSubmit = () => {
     var {
       name,
@@ -103,23 +103,28 @@ class Selection extends React.PureComponent<IProps, IState> {
       attribute
     } = this.state
 
+    // Token taken from Redux State
+    // This will get reset each server restart. This means you will have to visit the login page again.
     var token = this.props.token
 
     if(name && token) {
-        return axios.get(
-            `https://register.tamuhack.com/api/volunteer/search?q=${name}`,
-            {
-               headers: {
-                'Authorization': `Token ${token}`
-               }
-            }
-        ).then(response => {
-            var responseData = response.data.results
-            responseData.length == 0 ? this.createWarningToast(responseData) : this.createSuccessToast(responseData) 
-        }).catch(error => {
-            this.createFailureToast() 
-        });
+      return axios.get(
+        `https://register.tamuhack.com/api/volunteer/search?q=${name}`,
+        {
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        }
+      ).then(response => {
+        var responseData = response.data.results
+        
+        // OPTIONAL: Warning toast if there is 0 results found
+        responseData.length == 0 ? this.createWarningToast(responseData) : this.createSuccessToast(responseData) 
+      }).catch(error => {
+        this.createFailureToast() 
+      });
     } else {
+      // Same error message as in the .catch tag
       this.createFailureToast() 
     }
   }
@@ -130,11 +135,7 @@ class Selection extends React.PureComponent<IProps, IState> {
         users
     } = this.state;
 
-    // Formats the individual options in the select tags (react-select)
-
-    console.log(users)
-
-    // Create the success and failure toast
+    // Create the failure, success, and warning toast
     let failureToast = (this.state.searchFailed) ? (
         <Toast type="error" text={this.state.toastText} id={this.state.currentToastID}/>
     ) : undefined;
@@ -166,23 +167,26 @@ class Selection extends React.PureComponent<IProps, IState> {
 
         <div style={{marginTop: "10px"}}>
             {
-                users.map((user, index) => {
-                    return (
-                        <div style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
-                            <h5 style={{margin: "0px"}}>
-                                {user.first_name} {user.last_name}
-                                <span style={{float: 'right', marginTop: "4px"}}
-                                    onClick = {() => this.handlePopup(user)}
-                                >
-                                    <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
-                                </span>
-                            </h5>
-                            <p style={{margin: "0px"}}>
-                                {user.email}
-                            </p>
-                        </div>
-                    )
-                })
+              // For each user 
+              users.map((user, index) => {
+                  // Return this HTML 
+                  return (
+                      <div style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
+                          <h5 style={{margin: "0px"}}>
+                              {user.first_name} {user.last_name}
+                              {/* TODO Launch Popup */}
+                              <span style={{float: 'right', marginTop: "4px"}}
+                                onClick = {() => this.handlePopup(user)}
+                              >
+                                <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                              </span>
+                          </h5>
+                          <p style={{margin: "0px"}}>
+                              {user.email}
+                          </p>
+                      </div>
+                  )
+              })
             }
         </div>
 
@@ -195,8 +199,6 @@ class Selection extends React.PureComponent<IProps, IState> {
   }
 }
 const style : { [key: string]: React.CSSProperties } = {
-
-  // Changed, no longer flex and MarginTop is hardcoded
   pageContainer : {
     padding: "20px",
     marginTop: "20px",
@@ -204,21 +206,11 @@ const style : { [key: string]: React.CSSProperties } = {
   }
 };
 
-// const mapStateToProps = state => {
-//   console.log('....', state)
-//   return {}
-// };
-
-
-const mapStateToProps = state => {
-  console.log('mapStateToProps', state.auth.userData.data)
-  return ({
+const mapStateToProps = state => ({
   token: (state.auth.userData.data) ? state.auth.userData.data.token : undefined
   /*event: state.selection.eventName,
   attribute: state.selection.attribute,*/
-})
-
-};
+});
 
 const mapDispatchToProps = dispatch => ({
   /*login: (email:string, password:string) => dispatch(actions.login(email, password))*/

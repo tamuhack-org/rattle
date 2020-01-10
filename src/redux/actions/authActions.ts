@@ -44,7 +44,6 @@ export const login = (email: string, password: string) => {
          }
       }
     ).then(response => {
-      console.log('Login', response)
       dispatch(loginSuccess(response));
     }).catch(error => {
       dispatch(loginFailed(error));

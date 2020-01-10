@@ -94,7 +94,7 @@ class Login extends React.PureComponent<IProps, IState> {
 
     if(redirectToSelection) {
       return (
-        <Redirect to='/search'/>
+        <Redirect to='/todo'/>
       )
     }
 
@@ -104,6 +104,7 @@ class Login extends React.PureComponent<IProps, IState> {
     ) : undefined;
 
     let successToast = (this.state.loginSuccess) ? (
+      // Note, the call back will reload page and cause the page to redirect once toast is finished. 
       <Toast type="success" text={this.state.toastText} id={this.state.currentToastID} callback={() => this.setState({ redirectToSelection: true })}/>
     ) : undefined;
 
