@@ -93,9 +93,7 @@ class Login extends React.PureComponent<IProps, IState> {
     const { redirectToSelection } = this.state;
 
     if(redirectToSelection) {
-      return (
-        <Redirect to='/todo'/>
-      )
+        <Redirect to='/select'/>
     }
 
     // Create the success and failure toast

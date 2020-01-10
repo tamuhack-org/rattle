@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import auth from './authReducer';
+import selection from './selectionReducer';
 
 const rootReducer = combineReducers({
-  auth
+  auth,
+  selection
 });
 
 export type AppState = ReturnType<typeof rootReducer>
