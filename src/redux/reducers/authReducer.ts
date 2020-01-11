@@ -8,7 +8,6 @@ const INITIAL_STATE: object = {
 };
 
 export default function auth(state = INITIAL_STATE, action: AuthActionTypes): object {
-  console.log(action.type);
   switch (action.type) {
     case 'LOGIN_ATTEMPT':
       return {

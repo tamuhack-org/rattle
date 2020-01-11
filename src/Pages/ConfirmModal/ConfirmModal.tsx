@@ -44,7 +44,6 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
-      console.log(response);
       this.setState({ participantRegistered: true });
     }).catch(exception => {
       console.log(exception);
