@@ -17,6 +17,7 @@ export default function auth(state = INITIAL_STATE, action: AuthActionTypes): ob
         isLoggedIn: false
       };
     case 'LOGIN_SUCCESS':
+      console.log(action.userData);
       return {
         ...state,
         isLoading: false,
