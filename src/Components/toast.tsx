@@ -18,7 +18,7 @@ import React from 'react';
 var commonArgs : object = {
     position: "bottom-center",
     autoClose: 1500,
-    hideProgressBar: false,
+    hideProgressBar: true,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true
@@ -70,7 +70,7 @@ class Toast extends React.PureComponent<IProps, IState> {
     // Get toast initializer
     const toastOptions = this.generateToast();
 
-    // toast.dismiss();  // <-- Remove all current toasts
+    toast.dismiss();  // <-- Remove all current toasts
 
     // Return a toast inside a toast container to parent component
     return (
