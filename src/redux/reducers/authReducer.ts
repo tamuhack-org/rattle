@@ -8,7 +8,6 @@ const INITIAL_STATE: object = {
 };
 
 export default function auth(state = INITIAL_STATE, action: AuthActionTypes): object {
-  console.log(action.type);
   switch (action.type) {
     case 'LOGIN_ATTEMPT':
       return {
@@ -17,6 +16,7 @@ export default function auth(state = INITIAL_STATE, action: AuthActionTypes): ob
         isLoggedIn: false
       };
     case 'LOGIN_SUCCESS':
+      console.log(action.userData);
       return {
         ...state,
         isLoading: false,

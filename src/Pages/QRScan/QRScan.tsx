@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
+import axios from 'axios';
 import QrReader from 'react-qr-reader';
-import { LoginData } from '../../types/LoginType';
+import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
+import Badge from 'react-bootstrap/Badge';
+import Rodal from 'rodal';
+import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface IProps {
@@ -16,53 +21,118 @@ interface IProps {
 }
 
 interface IState {
-  qrText: string;
+  qrData: QRData;
   delay: number;
   frontCamera: boolean;
+  confirmVisible: boolean;
+  registeredStatus: boolean;
 }
 
 class QRScan extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = {qrText: "", delay: 500, frontCamera: true}
-    this.handleScan = this.handleScan.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.switchCamera = this.switchCamera.bind(this);
+    this.state = {qrData: {
+      first_name: "",
+      last_name: "",
+      email: "",
+    },
+    delay: 500, 
+    frontCamera: true, 
+    confirmVisible: false,
+    registeredStatus: false}
   }
 
-  handleScan(data) {
-    console.log(data);
+  getRegisteredStatus = async (email: string) => {
+    var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
+
+    let registeredStatus = false;
+    await axios.get(
+      checkInStatusUrl,
+      {
+         headers: {
+           'content-type': 'application/json',
+           authorization: 'Token ' + this.props.userData.data.token
+         },
+      }
+    ).then(response => {
+      registeredStatus = response.data.checked_in;
+    }).catch(error => {
+      // TODO make a toast
+      // API Call failed
+      console.log(error);
+    });
+
+    return registeredStatus;
   }
 
-  handleError(error) {
-    console.log(error);
+  handleScan = async (data: string) => {
+    if(data === null) {
+      return;
+    }
+    try {
+      var qrObj = JSON.parse(data);
+      if(Object.prototype.hasOwnProperty.call(qrObj, 'email') && 
+        Object.prototype.hasOwnProperty.call(qrObj, 'first_name') && 
+        Object.prototype.hasOwnProperty.call(qrObj, 'last_name')) {
+
+        const status = await this.getRegisteredStatus(qrObj.email);
+        this.setState({ qrData: qrObj, confirmVisible: true, registeredStatus: status });
+      } else {
+        console.log("QR code has invalid properties!");
+      }
+    } catch (exception) {
+      console.log(exception)
+      // TODO 
+      // Toast for invalid QR Code
+    }
   }
 
-  switchCamera() {
+  handleError = (error) => {
+    
+  }
+
+  switchCamera = () => {
     this.setState({frontCamera: !this.state.frontCamera});
+  }
+
+  show = () => {
+    this.setState({ confirmVisible: true });
+  }
+
+  hide = () => {
+    this.setState({ confirmVisible: false });
   }
 
   render() {
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
     return (
       <div style={style.pageContainer}>
-        <div style={style.selectionContainer}>
-          <Button style={{width: '40vw', height: '5vh'}}>{this.props.event}</Button>
-          <Button style={{width: '40vw', height: '5vh'}}>{this.props.attribute}</Button>
-        </div>
-        <Button
-          style={style.switchCameraContainer}
-          onClick={this.switchCamera}>
-          Switch
-        </Button>
-        <QrReader
-          style={{width: '100%', alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
-          delay={this.state.delay}
-          onError={this.handleError}
-          onScan={this.handleScan}
-          facingMode={cameraString}
+        {!this.state.confirmVisible && 
+          <div>
+            <QrReader
+              style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
+              delay={this.state.delay}
+              onError={this.handleError}
+              onScan={this.handleScan}
+              facingMode={cameraString}
+              disabled
+            />
+            <Button
+              style={style.switchCameraContainer}
+              onClick={this.switchCamera}>
+              Switch
+            </Button>
+          </div>
+        }
+        {this.state.confirmVisible && 
+          <ConfirmModal 
+          qrData={this.state.qrData}
+          modalVisible={this.state.confirmVisible}
+          closeModal={this.hide}
+          registeredStatus={this.state.registeredStatus}
         />
+        }
       </div>
     );
   }
@@ -75,7 +145,7 @@ const style : { [key: string]: React.CSSProperties } = {
     width: '100vw',
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     paddingTop: '10vh'
   },
   selectionContainer: {
@@ -85,13 +155,39 @@ const style : { [key: string]: React.CSSProperties } = {
     justifyContent: 'space-around'
   },
   switchCameraContainer: {
-
+    width: '80vw',
+  },
+  modalContainer: {
+    display: 'flex',
+    backgroundColor: 'white',
+    height: 350,
+    padding: 30,
+  },
+  checkInStatusRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    border: '5px solid #5CD059',
+    marginBottom: 50,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
+  emailRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    paddingTop: 0,
+    marginBottom: 20,
+    borderBottom: '1px #DEDEDE solid',
   }
 };
 
 const mapStateToProps = state => ({
   event: state.selection.event,
   attribute: state.selection.attribute,
+  userData: state.auth.userData,
 });
 
 export default connect(mapStateToProps)(QRScan);
