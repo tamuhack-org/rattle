@@ -20,7 +20,6 @@ class TopNavbar extends React.PureComponent<IProps, IState> {
     super(props);
   }
 
-  // Given the props create the needed toast initializer
   render() {
     var {
         leftIconSrc,
