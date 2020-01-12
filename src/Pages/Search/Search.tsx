@@ -10,6 +10,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import axios from 'axios';
 import { throwStatement } from '@babel/types';
 import Toast from './../../Components/toast';
+import TopNavbar from './../../Components/navbar';
 
 interface IProps {
   event: string;
@@ -149,51 +150,54 @@ class Selection extends React.PureComponent<IProps, IState> {
     ) : undefined;
 
     return (
-      <div style={style.pageContainer}>
-        <InputGroup className="mb-3">
-            <FormControl
-                style={{fontSize: "18px"}}
-                placeholder="Search User"
-                onChange={this.nameHandler}
-            />
-        </InputGroup>
+      <div>
+        <TopNavbar leftIconSrc="arrowleft" leftRedirectRoute="/scan"/>
+        <div style={style.pageContainer}>
+          <InputGroup className="mb-3">
+              <FormControl
+                  style={{fontSize: "18px"}}
+                  placeholder="Search User"
+                  onChange={this.nameHandler}
+              />
+          </InputGroup>
 
-        <Button block
-          style={{border: "1px solid #FF7C93", backgroundColor: "#FF7C93"}}
-          onClick={this.handleSearchSubmit}
-          disabled={! (name)}
-          size="lg"
-        > Search </Button>
+          <Button block
+            style={{border: "1px solid #FF7C93", backgroundColor: "#FF7C93"}}
+            onClick={this.handleSearchSubmit}
+            disabled={! (name)}
+            size="lg"
+          > Search </Button>
 
-        <div style={{marginTop: "10px"}}>
-            {
-              // For each user 
-              users.map((user, index) => {
-                  // Return this HTML 
-                  return (
-                      <div style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
-                          <h5 style={{margin: "0px"}}>
-                              {user.first_name} {user.last_name}
-                              {/* TODO Launch Popup */}
-                              <span style={{float: 'right', marginTop: "4px"}}
-                                onClick = {() => this.handlePopup(user)}
-                              >
-                                <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
-                              </span>
-                          </h5>
-                          <p style={{margin: "0px"}}>
-                              {user.email}
-                          </p>
-                      </div>
-                  )
-              })
-            }
+          <div style={{marginTop: "10px"}}>
+              {
+                // For each user 
+                users.map((user, index) => {
+                    // Return this HTML 
+                    return (
+                        <div style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
+                            <h5 style={{margin: "0px"}}>
+                                {user.first_name} {user.last_name}
+                                {/* TODO Launch Popup */}
+                                <span style={{float: 'right', marginTop: "4px"}}
+                                  onClick = {() => this.handlePopup(user)}
+                                >
+                                  <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                                </span>
+                            </h5>
+                            <p style={{margin: "0px"}}>
+                                {user.email}
+                            </p>
+                        </div>
+                    )
+                })
+              }
+          </div>
+
+          {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
+          {failureToast}
+          {successToast}
+          {warningToast}
         </div>
-
-        {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
-        {failureToast}
-        {successToast}
-        {warningToast}
       </div>
     );
   }

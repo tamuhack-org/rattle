@@ -8,6 +8,7 @@ import * as actions from '../../redux/actions/selectionActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
+import TopNavbar from './../../Components/navbar';
 
 
 interface IProps {
@@ -99,43 +100,45 @@ class Selection extends React.PureComponent<IProps, IState> {
       </div>
     );
 
-
     return (
-      <div style={style.pageContainer}>
-        <h2 style={{ fontSize: '36px', color: "#FF7C93", marginBottom: "40px" }}>
-          Select a scan...
-        </h2>
+      <div>
+        <TopNavbar leftIconSrc="isymbol" rightIconSrc="logout" leftRedirectRoute="/info" rightRedirectRoute="/" />
+        <div style={style.pageContainer}>
+          <h2 style={{ fontSize: '36px', color: "#FF7C93", marginBottom: "40px" }}>
+            Select a scan...
+          </h2>
 
-        {/* React-Select component */}
-        <Select
-          options={eventOptions}
-          formatGroupLabel={formatGroupLabel}
-          placeholder="Event"
-          isClearable={true}
-          isSearchable={ false }
-          onChange={this.eventSelectChange}
-        />
-        <br />
+          {/* React-Select component */}
+          <Select
+            options={eventOptions}
+            formatGroupLabel={formatGroupLabel}
+            placeholder="Event"
+            isClearable={true}
+            isSearchable={ false }
+            onChange={this.eventSelectChange}
+          />
+          <br />
 
-        {/* React-Select component */}
-        <Select
-          options={attributeOptions}
-          formatGroupLabel={formatGroupLabel}
-          placeholder="Attribute"
-          isClearable={true}
-          isDisabled={event == ""}
-          onChange={this.attributeSelectChange}
-          isSearchable={ false }
-        />
-        <br />
+          {/* React-Select component */}
+          <Select
+            options={attributeOptions}
+            formatGroupLabel={formatGroupLabel}
+            placeholder="Attribute"
+            isClearable={true}
+            isDisabled={event == ""}
+            onChange={this.attributeSelectChange}
+            isSearchable={ false }
+          />
+          <br />
 
-        <Button block
-          style={{border: "1px solid #FF7C93", backgroundColor: "#FF7C93"}}
-          onClick={this.handleScanSubmit}
-          disabled={! (event && attribute)}
-        >
-          Start Scanning
-        </Button>
+          <Button block
+            style={{border: "1px solid #FF7C93", backgroundColor: "#FF7C93"}}
+            onClick={this.handleScanSubmit}
+            disabled={! (event && attribute)}
+          >
+            Start Scanning
+          </Button>
+        </div>
       </div>
     );
   }
@@ -145,7 +148,7 @@ const style : { [key: string]: React.CSSProperties } = {
   // Changed, no longer flex and MarginTop is hardcoded
   pageContainer : {
     padding: "20px",
-    marginTop: "20vh",
+    marginTop: "12vh",
     width: '100vw',
   },
 

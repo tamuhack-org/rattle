@@ -2,6 +2,7 @@ import React, { CSSProperties } from 'react';
 import axios from 'axios';
 import QrReader from 'react-qr-reader';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import Search from '../Search/Search';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
@@ -9,6 +10,7 @@ import Badge from 'react-bootstrap/Badge';
 import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import TopNavbar from './../../Components/navbar';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -107,32 +109,35 @@ class QRScan extends React.PureComponent<IProps, IState> {
   render() {
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
     return (
-      <div style={style.pageContainer}>
-        {!this.state.confirmVisible && 
-          <div>
-            <QrReader
-              style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
-              delay={this.state.delay}
-              onError={this.handleError}
-              onScan={this.handleScan}
-              facingMode={cameraString}
-              disabled
-            />
-            <Button
-              style={style.switchCameraContainer}
-              onClick={this.switchCamera}>
-              Switch
-            </Button>
-          </div>
-        }
-        {this.state.confirmVisible && 
-          <ConfirmModal 
-          qrData={this.state.qrData}
-          modalVisible={this.state.confirmVisible}
-          closeModal={this.hide}
-          registeredStatus={this.state.registeredStatus}
-        />
-        }
+      <div>
+        <TopNavbar leftIconSrc="arrowleft" rightIconSrc="magnifying" leftRedirectRoute="/select" rightRedirectRoute="/search"/>
+        <div style={style.pageContainer}>
+          {!this.state.confirmVisible && 
+            <div>
+              <QrReader
+                style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
+                delay={this.state.delay}
+                onError={this.handleError}
+                onScan={this.handleScan}
+                facingMode={cameraString}
+                disabled
+              />
+              <Button
+                style={style.switchCameraContainer}
+                onClick={this.switchCamera}>
+                Switch
+              </Button>
+            </div>
+          }
+          {this.state.confirmVisible && 
+            <ConfirmModal 
+            qrData={this.state.qrData}
+            modalVisible={this.state.confirmVisible}
+            closeModal={this.hide}
+            registeredStatus={this.state.registeredStatus}
+          />
+          }
+        </div>
       </div>
     );
   }
@@ -141,7 +146,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
 const style : { [key: string]: React.CSSProperties } = {
   pageContainer : {
     display: 'flex',
-    height: '100vh',
+    height: 'calc(100vh - 72px)',
     width: '100vw',
     alignItems: 'center',
     flexDirection: 'column',

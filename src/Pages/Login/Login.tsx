@@ -15,6 +15,7 @@ interface IProps {
   userData: LoginData;
   error: string;
   login: (email: string, password: string) => Promise<object>;
+  logout: () => void;
 }
 
 interface IState {
@@ -46,6 +47,7 @@ class Login extends React.PureComponent<IProps, IState> {
       currentToastID: 0, 
       toastText: ""
     };
+    // this.props.logout();
   }
 
   createFailureToast() {
@@ -74,7 +76,6 @@ class Login extends React.PureComponent<IProps, IState> {
     this.props.login(this.state.email, this.state.password).then(() => {
       if(this.props.error) {
         this.createFailureToast()
-        console.log(this.props);
       } else {
         this.createSuccessToast()
       }
@@ -91,13 +92,13 @@ class Login extends React.PureComponent<IProps, IState> {
 
   render() {
     const { redirectToSelection } = this.state;
-
+    
     if(redirectToSelection) {
       return (
         <Redirect to='/select'/>
       )
     }
- 
+
     // Create the success and failure toast
     let failureToast = (this.state.loginFailed) ? (
       <Toast type="error" text={this.state.toastText} id={this.state.currentToastID}/>
