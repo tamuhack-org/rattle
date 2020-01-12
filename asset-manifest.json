@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.js": "/rattle/static/js/main.3037803a.chunk.js",
-    "main.js.map": "/rattle/static/js/main.3037803a.chunk.js.map",
+    "main.js": "/rattle/static/js/main.75cf9071.chunk.js",
+    "main.js.map": "/rattle/static/js/main.75cf9071.chunk.js.map",
     "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
     "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
     "static/css/2.a2481488.chunk.css": "/rattle/static/css/2.a2481488.chunk.css",
-    "static/js/2.4b9b1b5b.chunk.js": "/rattle/static/js/2.4b9b1b5b.chunk.js",
-    "static/js/2.4b9b1b5b.chunk.js.map": "/rattle/static/js/2.4b9b1b5b.chunk.js.map",
+    "static/js/2.28f03963.chunk.js": "/rattle/static/js/2.28f03963.chunk.js",
+    "static/js/2.28f03963.chunk.js.map": "/rattle/static/js/2.28f03963.chunk.js.map",
     "index.html": "/rattle/index.html",
-    "precache-manifest.58c81e2a76bb27f862befe779b58a1fa.js": "/rattle/precache-manifest.58c81e2a76bb27f862befe779b58a1fa.js",
+    "precache-manifest.d3a25495a053620ccf91ac8581cc6f1d.js": "/rattle/precache-manifest.d3a25495a053620ccf91ac8581cc6f1d.js",
     "service-worker.js": "/rattle/service-worker.js",
     "static/css/2.a2481488.chunk.css.map": "/rattle/static/css/2.a2481488.chunk.css.map",
-    "static/js/2.4b9b1b5b.chunk.js.LICENSE": "/rattle/static/js/2.4b9b1b5b.chunk.js.LICENSE",
+    "static/js/2.28f03963.chunk.js.LICENSE": "/rattle/static/js/2.28f03963.chunk.js.LICENSE",
     "static/media/arrowleft.svg": "/rattle/static/media/arrowleft.05e4d747.svg",
     "static/media/arrowright.svg": "/rattle/static/media/arrowright.354874ba.svg",
     "static/media/hiss.svg": "/rattle/static/media/hiss.225cb576.svg",
@@ -23,7 +23,7 @@
   "entrypoints": [
     "static/js/runtime-main.601eb6f8.js",
     "static/css/2.a2481488.chunk.css",
-    "static/js/2.4b9b1b5b.chunk.js",
-    "static/js/main.3037803a.chunk.js"
+    "static/js/2.28f03963.chunk.js",
+    "static/js/main.75cf9071.chunk.js"
   ]
 }
