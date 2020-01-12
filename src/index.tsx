@@ -5,14 +5,17 @@ import Login from './Pages/Login/Login';
 import * as serviceWorker from './serviceWorker';
 
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import { store, persistor } from './redux/store';
+import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import 'react-toastify/dist/ReactToastify.css';
 
 const ReduxApp = () => {
   return (
     <Provider store={store}>
-      <Routes />
+        <PersistGate loading={null} persistor={persistor}>
+          <Routes />
+        </PersistGate>
     </Provider>
   )
 }
