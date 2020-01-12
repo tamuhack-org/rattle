@@ -2,6 +2,7 @@ import React, { CSSProperties } from 'react';
 import axios from 'axios';
 import QrReader from 'react-qr-reader';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import Search from '../Search/Search';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import Button from 'react-bootstrap/Button';
@@ -109,7 +110,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
     return (
       <div>
-        <TopNavbar leftIconSrc="arrowleft" rightIconSrc="magnifying"/>
+        <TopNavbar leftIconSrc="arrowleft" rightIconSrc="magnifying" leftRedirectRoute="/select" rightRedirectRoute="/search"/>
         <div style={style.pageContainer}>
           {!this.state.confirmVisible && 
             <div>

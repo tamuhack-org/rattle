@@ -100,10 +100,9 @@ class Selection extends React.PureComponent<IProps, IState> {
       </div>
     );
 
-
     return (
       <div>
-        <TopNavbar leftIconSrc="isymbol" rightIconSrc="logout"/>
+        <TopNavbar leftIconSrc="isymbol" rightIconSrc="logout" leftRedirectRoute="/info" rightRedirectRoute="/" />
         <div style={style.pageContainer}>
           <h2 style={{ fontSize: '36px', color: "#FF7C93", marginBottom: "40px" }}>
             Select a scan...

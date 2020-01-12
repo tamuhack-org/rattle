@@ -16,16 +16,15 @@ export const loginFailed = ( error: object ): AppActions => ({
   type: 'LOGIN_FAILED',
   error
 });
-//
-// export const logoutComplete = (): AppActions => ({
-//   type: 'LOGOUT_COMPLETE'
-// });
 
-export function logout() {
-  return dispatch => {
-    //dispatch(logoutComplete());
-    //Actions.replace('login');
-  };
+export const logoutComplete = (): AppActions => ({
+  type: 'LOGOUT'
+});
+
+export const logout = () => {
+  return (dispatch: Dispatch<AppActions>) => {
+    dispatch(logoutComplete());
+  }
 };
 
 export const login = (email: string, password: string) => {

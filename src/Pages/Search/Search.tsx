@@ -151,7 +151,7 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     return (
       <div>
-        <TopNavbar leftIconSrc="arrowleft"/>
+        <TopNavbar leftIconSrc="arrowleft" leftRedirectRoute="/scan"/>
         <div style={style.pageContainer}>
           <InputGroup className="mb-3">
               <FormControl

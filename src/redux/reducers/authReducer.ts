@@ -16,7 +16,6 @@ export default function auth(state = INITIAL_STATE, action: AuthActionTypes): ob
         isLoggedIn: false
       };
     case 'LOGIN_SUCCESS':
-      console.log(action.userData);
       return {
         ...state,
         isLoading: false,
@@ -33,10 +32,10 @@ export default function auth(state = INITIAL_STATE, action: AuthActionTypes): ob
       };
     case 'LOGOUT':
       return {
-        ...state,
         userData: {},
         isLoading: false,
-        isLoggedIn: false
+        isLoggedIn: false,
+        error: undefined
       };
     default:
       return state;
