@@ -16,7 +16,6 @@ interface IProps {
 
   qrData: QRData;
   modalVisible: boolean;
-  registeredStatus: boolean;
   closeModal: () => void;
 }
 
@@ -27,8 +26,30 @@ interface IState {
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
+    this.state = {participantRegistered: false};
+  }
 
-    this.state = {participantRegistered: props.registeredStatus}
+  getRegisteredStatus = async (email: string) => {
+    var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
+
+    let registeredStatus = false;
+    await axios.get(
+      checkInStatusUrl,
+      {
+         headers: {
+           'content-type': 'application/json',
+           authorization: 'Token ' + this.props.userData.data.token
+         },
+      }
+    ).then(response => {
+      registeredStatus = response.data.checked_in;
+    }).catch(error => {
+      // TODO make a toast
+      // API Call failed
+      console.log(error);
+    });
+
+    return registeredStatus;
   }
 
   checkInUser = async () => {
@@ -46,8 +67,14 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     }).then(response => {
       this.setState({ participantRegistered: true });
     }).catch(exception => {
+      this.setState({participantRegistered: false});
       console.log(exception);
-    })
+    });
+  }
+
+  async componentDidUpdate() {
+    const isRegistered = await this.getRegisteredStatus(this.props.qrData.email);
+    this.setState({ participantRegistered: isRegistered });
   }
 
   render() {
