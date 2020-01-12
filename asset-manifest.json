@@ -1,20 +1,21 @@
 {
   "files": {
-    "main.js": "/rattle/static/js/main.b2655178.chunk.js",
-    "main.js.map": "/rattle/static/js/main.b2655178.chunk.js.map",
+    "main.js": "/rattle/static/js/main.7b18e13b.chunk.js",
+    "main.js.map": "/rattle/static/js/main.7b18e13b.chunk.js.map",
     "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
     "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
     "static/css/2.a2481488.chunk.css": "/rattle/static/css/2.a2481488.chunk.css",
-    "static/js/2.0aef5f0c.chunk.js": "/rattle/static/js/2.0aef5f0c.chunk.js",
-    "static/js/2.0aef5f0c.chunk.js.map": "/rattle/static/js/2.0aef5f0c.chunk.js.map",
+    "static/js/2.4b9b1b5b.chunk.js": "/rattle/static/js/2.4b9b1b5b.chunk.js",
+    "static/js/2.4b9b1b5b.chunk.js.map": "/rattle/static/js/2.4b9b1b5b.chunk.js.map",
     "index.html": "/rattle/index.html",
-    "precache-manifest.dd35b102b821a29d7696ab6ebde20613.js": "/rattle/precache-manifest.dd35b102b821a29d7696ab6ebde20613.js",
+    "precache-manifest.3ed6f176997e46ad099952da892ca749.js": "/rattle/precache-manifest.3ed6f176997e46ad099952da892ca749.js",
     "service-worker.js": "/rattle/service-worker.js",
     "static/css/2.a2481488.chunk.css.map": "/rattle/static/css/2.a2481488.chunk.css.map",
-    "static/js/2.0aef5f0c.chunk.js.LICENSE": "/rattle/static/js/2.0aef5f0c.chunk.js.LICENSE",
+    "static/js/2.4b9b1b5b.chunk.js.LICENSE": "/rattle/static/js/2.4b9b1b5b.chunk.js.LICENSE",
     "static/media/arrowleft.svg": "/rattle/static/media/arrowleft.05e4d747.svg",
     "static/media/arrowright.svg": "/rattle/static/media/arrowright.354874ba.svg",
     "static/media/hiss.svg": "/rattle/static/media/hiss.225cb576.svg",
+    "static/media/hiss_full_logo.svg": "/rattle/static/media/hiss_full_logo.d26ff6ed.svg",
     "static/media/isymbol.svg": "/rattle/static/media/isymbol.3c20c3ff.svg",
     "static/media/logout.svg": "/rattle/static/media/logout.354874ba.svg",
     "static/media/magnifying.svg": "/rattle/static/media/magnifying.0874efde.svg"
@@ -22,7 +23,7 @@
   "entrypoints": [
     "static/js/runtime-main.601eb6f8.js",
     "static/css/2.a2481488.chunk.css",
-    "static/js/2.0aef5f0c.chunk.js",
-    "static/js/main.b2655178.chunk.js"
+    "static/js/2.4b9b1b5b.chunk.js",
+    "static/js/main.7b18e13b.chunk.js"
   ]
 }

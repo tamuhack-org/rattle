@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ee33e3fda117dcc7034a8c54dbebbaac",
+    "revision": "45c8599be7da724587c0a09272619810",
     "url": "/rattle/index.html"
   },
   {
-    "revision": "2d9d137546f577e87158",
+    "revision": "f98ead78350a6c783379",
     "url": "/rattle/static/css/2.a2481488.chunk.css"
   },
   {
-    "revision": "2d9d137546f577e87158",
-    "url": "/rattle/static/js/2.0aef5f0c.chunk.js"
+    "revision": "f98ead78350a6c783379",
+    "url": "/rattle/static/js/2.4b9b1b5b.chunk.js"
   },
   {
     "revision": "87984cad984dae3222b2a1d0861003a4",
-    "url": "/rattle/static/js/2.0aef5f0c.chunk.js.LICENSE"
+    "url": "/rattle/static/js/2.4b9b1b5b.chunk.js.LICENSE"
   },
   {
-    "revision": "de149f77899347c1eb84",
-    "url": "/rattle/static/js/main.b2655178.chunk.js"
+    "revision": "e830a34d8671b1093a16",
+    "url": "/rattle/static/js/main.7b18e13b.chunk.js"
   },
   {
     "revision": "57c9a191fcc2461ea0ff",
@@ -34,6 +34,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "225cb576f04ffa32577c32614550e06f",
     "url": "/rattle/static/media/hiss.225cb576.svg"
+  },
+  {
+    "revision": "d26ff6edd77ffd81ad869393faffe639",
+    "url": "/rattle/static/media/hiss_full_logo.d26ff6ed.svg"
   },
   {
     "revision": "3c20c3ff3db6be51d67810bb296c3b9f",
