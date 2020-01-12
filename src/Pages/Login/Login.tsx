@@ -183,7 +183,6 @@ const style : { [key: string]: React.CSSProperties } = {
     paddingLeft: '4%',
     marginBottom: '3vh',
     fontSize: 17,
-    border: 0,
     outline: 'none'
   },
   submitContainer: {
