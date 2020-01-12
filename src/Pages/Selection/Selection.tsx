@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 import TopNavbar from './../../Components/navbar';
+import { throwStatement } from '@babel/types';
 
 
 interface IProps {
@@ -28,8 +29,8 @@ class Selection extends React.PureComponent<IProps, IState> {
     super(props);
 
     this.state = {
-      event: "",
-      attribute: "",
+      event: this.props.event,
+      attribute: this.props.attribute,
       redirectToScan: false,
     }
   }
@@ -64,7 +65,7 @@ class Selection extends React.PureComponent<IProps, IState> {
 
   handleScanSubmit = () => {
     // TODO may have to change logic depending on Event and Attribute
-    if(this.state.event && this.state.attribute) {
+    if(this.state.event !== "" && this.state.attribute !== "") {
       this.props.updateSelection(this.state.event, this.state.attribute);
       this.setState({ redirectToScan: true });
     }

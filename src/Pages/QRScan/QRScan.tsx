@@ -27,7 +27,6 @@ interface IState {
   delay: number;
   frontCamera: boolean;
   confirmVisible: boolean;
-  registeredStatus: boolean;
 }
 
 class QRScan extends React.PureComponent<IProps, IState> {
@@ -41,35 +40,11 @@ class QRScan extends React.PureComponent<IProps, IState> {
     },
     delay: 500, 
     frontCamera: true, 
-    confirmVisible: false,
-    registeredStatus: false}
-  }
-
-  getRegisteredStatus = async (email: string) => {
-    var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
-
-    let registeredStatus = false;
-    await axios.get(
-      checkInStatusUrl,
-      {
-         headers: {
-           'content-type': 'application/json',
-           authorization: 'Token ' + this.props.userData.data.token
-         },
-      }
-    ).then(response => {
-      registeredStatus = response.data.checked_in;
-    }).catch(error => {
-      // TODO make a toast
-      // API Call failed
-      console.log(error);
-    });
-
-    return registeredStatus;
+    confirmVisible: false}
   }
 
   handleScan = async (data: string) => {
-    if(data === null) {
+    if(data === null || this.state.confirmVisible) {
       return;
     }
     try {
@@ -78,8 +53,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
         Object.prototype.hasOwnProperty.call(qrObj, 'first_name') && 
         Object.prototype.hasOwnProperty.call(qrObj, 'last_name')) {
 
-        const status = await this.getRegisteredStatus(qrObj.email);
-        this.setState({ qrData: qrObj, confirmVisible: true, registeredStatus: status });
+        this.setState({ qrData: qrObj, confirmVisible: true });
       } else {
         console.log("QR code has invalid properties!");
       }
@@ -112,31 +86,25 @@ class QRScan extends React.PureComponent<IProps, IState> {
       <div>
         <TopNavbar leftIconSrc="arrowleft" rightIconSrc="magnifying" leftRedirectRoute="/select" rightRedirectRoute="/search"/>
         <div style={style.pageContainer}>
-          {!this.state.confirmVisible && 
-            <div>
-              <QrReader
-                style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
-                delay={this.state.delay}
-                onError={this.handleError}
-                onScan={this.handleScan}
-                facingMode={cameraString}
-                disabled
-              />
-              <Button
-                style={style.switchCameraContainer}
-                onClick={this.switchCamera}>
-                Switch
-              </Button>
-            </div>
-          }
-          {this.state.confirmVisible && 
-            <ConfirmModal 
+          <div>
+            <QrReader
+              style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
+              delay={this.state.delay}
+              onError={this.handleError}
+              onScan={this.handleScan}
+              facingMode={cameraString}
+            />
+            <Button
+              style={style.switchCameraContainer}
+              onClick={this.switchCamera}>
+              Switch
+            </Button>
+          </div>
+          <ConfirmModal 
             qrData={this.state.qrData}
             modalVisible={this.state.confirmVisible}
             closeModal={this.hide}
-            registeredStatus={this.state.registeredStatus}
           />
-          }
         </div>
       </div>
     );

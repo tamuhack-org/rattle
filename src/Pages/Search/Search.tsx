@@ -1,16 +1,14 @@
 import React from 'react';
-import QrReader from 'react-qr-reader';
 import { connect } from 'react-redux';
-import * as actions from '../../redux/actions/authActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import axios from 'axios';
-import { throwStatement } from '@babel/types';
 import Toast from './../../Components/toast';
 import TopNavbar from './../../Components/navbar';
+import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import { QRData } from '../../types/TypeObjects';
 
 interface IProps {
   event: string;
@@ -31,6 +29,9 @@ interface IState {
     searchSuccess: boolean;
     currentToastID: number;
     toastText: string;
+
+    modalVisible: boolean;
+    participantData: QRData;
 }
 
 class Selection extends React.PureComponent<IProps, IState> {
@@ -47,8 +48,29 @@ class Selection extends React.PureComponent<IProps, IState> {
         searchFailed: false, 
         searchSuccess: false,
         currentToastID: 0, 
-        toastText: ""
+        toastText: "",
+
+        modalVisible: false,
+        participantData: {
+          "email": "",
+          "first_name": "",
+          "last_name": ""
+        }
     }
+  }
+
+  showModal = () => {
+    this.setState({ modalVisible: true });
+  }
+
+  closeModal = () => {
+    this.setState({ modalVisible: false });
+  }
+  
+  setParticipantData = (user) => {
+    this.setState({ participantData: user}, () => {
+      this.setState({ modalVisible: true });
+    });
   }
 
   nameHandler = (event) => {
@@ -167,20 +189,17 @@ class Selection extends React.PureComponent<IProps, IState> {
             disabled={! (name)}
             size="lg"
           > Search </Button>
-
           <div style={{marginTop: "10px"}}>
               {
                 // For each user 
                 users.map((user, index) => {
                     // Return this HTML 
                     return (
-                        <div style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
+                        <div onClick={() => this.setParticipantData(user)} style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
                             <h5 style={{margin: "0px"}}>
                                 {user.first_name} {user.last_name}
                                 {/* TODO Launch Popup */}
-                                <span style={{float: 'right', marginTop: "4px"}}
-                                  onClick = {() => this.handlePopup(user)}
-                                >
+                                <span style={{float: 'right', marginTop: "4px"}}>
                                   <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
                                 </span>
                             </h5>
@@ -192,7 +211,11 @@ class Selection extends React.PureComponent<IProps, IState> {
                 })
               }
           </div>
-
+          <ConfirmModal
+            qrData={this.state.participantData}
+            modalVisible={this.state.modalVisible}
+            closeModal={this.closeModal}
+          />
           {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
           {failureToast}
           {successToast}
