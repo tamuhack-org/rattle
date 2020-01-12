@@ -115,7 +115,7 @@ class Login extends React.PureComponent<IProps, IState> {
           <div style={style.titleContainer}>
             <img
               style={style.logoContainer}
-              src={require("../../assets/hiss.svg")}
+              src={require("../../assets/hiss_full_logo.svg")}
             />
             <p style={{ fontSize: '18px' }}>by tamuhack</p>
           </div>
@@ -182,14 +182,17 @@ const style : { [key: string]: React.CSSProperties } = {
     width: '80vw',
     paddingLeft: '4%',
     marginBottom: '3vh',
-    fontSize: 17
+    fontSize: 17,
+    border: 0,
+    outline: 'none'
   },
   submitContainer: {
     height: '57px',
     width: '80vw',
     marginTop: '3vh',
     color: 'white',
-    fontSize: 20
+    fontSize: 20,
+    border: 0
   },
 };
 
