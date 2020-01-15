@@ -152,7 +152,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
                 isClearable={true}
                 isSearchable={ false }
                 styles={{
-                  // https://stackoverflow.com/questions/3920865/trouble-with-div-hide-show-on-mouse-click
+                  // https://stackoverflow.com/questions/55830799/how-to-change-zindex-in-react-select-drowpdown
                   menu: provided => ({ ...provided, zIndex: 9999 })
                 }}
                 defaultValue={event == "" ? undefined : eventOptions.filter( v => v['value'] == event )[0]}
@@ -168,7 +168,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
                 isDisabled={event == ""}
                 defaultValue={attribute == "" ? undefined : attributeOptions.filter( v => v['value'] == attribute )[0]}
                 styles={{
-                  // https://stackoverflow.com/questions/3920865/trouble-with-div-hide-show-on-mouse-click
+                  // https://stackoverflow.com/questions/55830799/how-to-change-zindex-in-react-select-drowpdown
                   menu: provided => ({ ...provided, zIndex: 9999 })
                 }}
                 onChange={this.attributeSelectChange}
