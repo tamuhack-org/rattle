@@ -57,9 +57,9 @@ class Selection extends React.PureComponent<IProps, IState> {
   determineAttributes = () => {
     // TODO
     return [
-      { value: 'chocolate', label: 'Attr. C' },
-      { value: 'strawberry', label: 'Attr. S' },
-      { value: 'vanilla', label: 'Attr. V' }
+      { value: 'c', label: 'Attr. C' },
+      { value: 's', label: 'Attr. S' },
+      { value: 'v', label: 'Attr. V' }
     ]
   }
 
@@ -100,7 +100,6 @@ class Selection extends React.PureComponent<IProps, IState> {
         <span style={style.groupBadgeStyles}>{data.options.length}</span>
       </div>
     );
-
     return (
       <div>
         <TopNavbar leftIconSrc="isymbol" rightIconSrc="logout" leftRedirectRoute="/info" rightRedirectRoute="/" />
@@ -116,6 +115,9 @@ class Selection extends React.PureComponent<IProps, IState> {
             placeholder="Event"
             isClearable={true}
             isSearchable={ false }
+            // Uses the event state to determine if any objects in the eventOptions array have a value equal to event. 
+            //  If so, return the first object where this is valid. (This logic is repeated 4 times) to select the defaul. 
+            defaultValue={event == "" ? undefined : eventOptions.filter( v => v['value'] == event )[0]}
             onChange={this.eventSelectChange}
           />
           <br />
@@ -127,6 +129,7 @@ class Selection extends React.PureComponent<IProps, IState> {
             placeholder="Attribute"
             isClearable={true}
             isDisabled={event == ""}
+            defaultValue={attribute == "" ? undefined : attributeOptions.filter( v => v['value'] == attribute )[0]}
             onChange={this.attributeSelectChange}
             isSearchable={ false }
           />
