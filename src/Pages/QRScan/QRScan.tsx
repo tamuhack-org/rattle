@@ -5,6 +5,9 @@ import ConfirmModal from '../ConfirmModal/ConfirmModal';
 import Search from '../Search/Search';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { AppActions } from '../../types/actions';
+import * as actions from '../../redux/actions/selectionActions';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import Rodal from 'rodal';
@@ -21,6 +24,7 @@ interface IProps {
   event: string;
   attribute: string;
   login: (email: string, password: string) => Promise<object>;
+  updateSelection: (event: string, attribute: string) => Dispatch<AppActions>;
 }
 
 interface IState {
@@ -89,6 +93,9 @@ class QRScan extends React.PureComponent<IProps, IState> {
   // Gets called every time the first select form has an option change.
   eventSelectChange = (option, actions) => {
     var val = option ? option.value : "";
+    if(val !== "") {
+      this.props.updateSelection(val, this.props.attribute);
+    }
     this.setState({
       event: val
     })
@@ -97,6 +104,9 @@ class QRScan extends React.PureComponent<IProps, IState> {
   // Gets called every time the second select form has an option change.
   attributeSelectChange = (option, actions) => {
     var val = option ? option.value : "";
+    if(val !== "") {
+      this.props.updateSelection(this.props.event, val);
+    }
     this.setState({
       attribute: val
     })
@@ -281,8 +291,11 @@ const mapStateToProps = state => ({
   userData: state.auth.userData,
 });
 
+const mapDispatchToProps = dispatch => ({
+  updateSelection: (event:string, attribute:string) => dispatch(actions.updateSelection(event, attribute))
+});
 /*
   TODO: Make the event and attribute state stored in redux
 */
 
-export default connect(mapStateToProps)(QRScan);
+export default connect(mapStateToProps, mapDispatchToProps)(QRScan);
