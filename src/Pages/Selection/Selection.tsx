@@ -40,7 +40,9 @@ class Selection extends React.PureComponent<IProps, IState> {
   eventSelectChange = (option, actions) => {
     var val = option ? option.value : "";
     this.setState({
-      event: val
+      event: val,
+      // Every event has a none options so this is the default. Stylistic change 
+      attribute: "NONE"
     })
   }
 
@@ -55,12 +57,30 @@ class Selection extends React.PureComponent<IProps, IState> {
   // Using the event state determine what options to return.
   // These will be displayed on the second dropdown
   determineAttributes = () => {
-    // TODO
-    return [
-      { value: 'c', label: 'Attr. C' },
-      { value: 's', label: 'Attr. S' },
-      { value: 'v', label: 'Attr. V' }
+    // https://github.com/tamuhack-org/Ouroboros/blob/86da19f7354388b77d3bda958f7054426debd728/hiss/volunteer/models.py#L6
+    var foodChoices = [
+      { value: 'NONE', label: 'None'},
+      { value: 'VEGAN', label: 'Vegan'},
+      { value: 'VEGETARIAN', label: 'Vegetarian'},
+      { value: 'HALAL', label: 'Halal'},
+      { value: 'KOSHER', label: 'Kosher'},
+      { value: 'GLUTEN_FREE', label: 'Gluten-free'},
+      { value: 'FOOD_ALLERGY', label: 'Food allergy'},
+      { value: 'DIETARY_RESTRICTION_OTHER', label: 'Other'}
     ]
+    if(this.state.event) {
+      // Options must match the eventOptions values
+      var options =  {
+        "checked_in": [ { value: 'NONE', label: 'N/A'}, ],
+        "BREAKFAST": foodChoices,
+        "LUNCH": foodChoices,
+        "DINNER": foodChoices,
+        "MIDNIGHT_SNACK": foodChoices,
+        "WorkshopEvent": [ { value: 'NONE', label: 'N/A'}, ]
+      }
+      return this.state.event in options ? options[this.state.event] : undefined
+    }
+    return undefined
   }
 
   handleScanSubmit = () => {
@@ -84,11 +104,14 @@ class Selection extends React.PureComponent<IProps, IState> {
       return <Redirect to='/scan' />
     }
 
-    // Hardcoded event options. Will need to be updated
+    // https://github.com/tamuhack-org/Ouroboros/blob/d1bafcdfaf6b54eaf7bf9a6720373e0bd3ec8855/hiss/volunteer/views.py
     const eventOptions = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
+      { value: 'checked_in', label: 'Check In' },
+      { value: 'BREAKFAST', label: 'Breakfast' },
+      { value: 'LUNCH', label: 'Lunch' },
+      { value: 'DINNER', label: 'Dinner' },
+      { value: 'MIDNIGHT_SNACK', label: 'Midnight Snack' },
+      { value: 'WorkshopEvent', label: 'Workshop' }
     ]
 
     const attributeOptions = this.determineAttributes()
@@ -100,6 +123,7 @@ class Selection extends React.PureComponent<IProps, IState> {
         <span style={style.groupBadgeStyles}>{data.options.length}</span>
       </div>
     );
+
     return (
       <div>
         <TopNavbar leftIconSrc="isymbol" rightIconSrc="logout" leftRedirectRoute="/info" rightRedirectRoute="/" />
@@ -129,7 +153,10 @@ class Selection extends React.PureComponent<IProps, IState> {
             placeholder="Attribute"
             isClearable={true}
             isDisabled={event == ""}
-            defaultValue={attribute == "" ? undefined : attributeOptions.filter( v => v['value'] == attribute )[0]}
+            value= {
+              attribute == "" || attributeOptions == undefined ? 
+              undefined : attributeOptions.filter( v => v['value'] == attribute )[0]
+            }
             onChange={this.attributeSelectChange}
             isSearchable={ false }
           />
