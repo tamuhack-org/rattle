@@ -152,7 +152,7 @@ class Selection extends React.PureComponent<IProps, IState> {
             formatGroupLabel={formatGroupLabel}
             placeholder="Attribute"
             isClearable={true}
-            isDisabled={event == ""}
+            isDisabled={event == "" || event == "checked_in" || event == "WorkshopEvent"}
             value= {
               attribute == "" || attributeOptions == undefined ? 
               undefined : attributeOptions.filter( v => v['value'] == attribute )[0]
