@@ -5,12 +5,16 @@ import ConfirmModal from '../ConfirmModal/ConfirmModal';
 import Search from '../Search/Search';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { AppActions } from '../../types/actions';
+import * as actions from '../../redux/actions/selectionActions';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TopNavbar from './../../Components/navbar';
+import Select from 'react-select'
 
 interface IProps {
   isLoggedIn: boolean;
@@ -20,9 +24,12 @@ interface IProps {
   event: string;
   attribute: string;
   login: (email: string, password: string) => Promise<object>;
+  updateSelection: (event: string, attribute: string) => Dispatch<AppActions>;
 }
 
 interface IState {
+  event: string;
+  attribute: string;
   qrData: QRData;
   delay: number;
   frontCamera: boolean;
@@ -38,6 +45,8 @@ class QRScan extends React.PureComponent<IProps, IState> {
       last_name: "",
       email: "",
     },
+    event: this.props.event,
+    attribute: this.props.attribute,
     delay: 500, 
     frontCamera: true, 
     confirmVisible: false}
@@ -80,12 +89,129 @@ class QRScan extends React.PureComponent<IProps, IState> {
     this.setState({ confirmVisible: false });
   }
 
+
+  // Gets called every time the first select form has an option change.
+  eventSelectChange = (option, actions) => {
+    var val = option ? option.value : "";
+    if(val !== "") {
+      this.props.updateSelection(val, this.props.attribute);
+    }
+    this.setState({
+      event: val,
+      // Every event has a none options so this is the default. Stylistic change 
+      attribute: "NONE"
+    })
+  }
+
+  // Gets called every time the second select form has an option change.
+  attributeSelectChange = (option, actions) => {
+    var val = option ? option.value : "";
+    if(val !== "") {
+      this.props.updateSelection(this.props.event, val);
+    }
+    this.setState({
+      attribute: val
+    })
+  }
+
+  // Using the event state determine what options to return.
+  // These will be displayed on the second dropdown
+  determineAttributes = () => {
+    // https://github.com/tamuhack-org/Ouroboros/blob/86da19f7354388b77d3bda958f7054426debd728/hiss/volunteer/models.py#L6
+    var foodChoices = [
+      { value: 'NONE', label: 'None'},
+      { value: 'VEGAN', label: 'Vegan'},
+      { value: 'VEGETARIAN', label: 'Vegetarian'},
+      { value: 'HALAL', label: 'Halal'},
+      { value: 'KOSHER', label: 'Kosher'},
+      { value: 'GLUTEN_FREE', label: 'Gluten-free'},
+      { value: 'FOOD_ALLERGY', label: 'Food allergy'},
+      { value: 'DIETARY_RESTRICTION_OTHER', label: 'Other'}
+    ]
+    if(this.state.event) {
+      // Options must match the eventOptions values
+      var options =  {
+        "checked_in": [ { value: 'NONE', label: 'N/A'}, ],
+        "BREAKFAST": foodChoices,
+        "LUNCH": foodChoices,
+        "DINNER": foodChoices,
+        "MIDNIGHT_SNACK": foodChoices,
+        "WorkshopEvent": [ { value: 'NONE', label: 'N/A'}, ]
+      }
+      return this.state.event in options ? options[this.state.event] : undefined
+    }
+    return undefined
+  }
+
   render() {
+    var {
+      event,
+      attribute
+    } = this.state;
+
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
+
+    // https://github.com/tamuhack-org/Ouroboros/blob/d1bafcdfaf6b54eaf7bf9a6720373e0bd3ec8855/hiss/volunteer/views.py
+    const eventOptions = [
+      { value: 'checked_in', label: 'Check In' },
+      { value: 'BREAKFAST', label: 'Breakfast' },
+      { value: 'LUNCH', label: 'Lunch' },
+      { value: 'DINNER', label: 'Dinner' },
+      { value: 'MIDNIGHT_SNACK', label: 'Midnight Snack' },
+      { value: 'WorkshopEvent', label: 'Workshop' }
+    ]
+
+    const attributeOptions = this.determineAttributes()
+
+    // Formats the individual options in the select tags (react-select)
+    const formatGroupLabel = data => (
+      <div style={style.groupStyles}>
+        <span>{data.label}</span>
+        <span style={style.groupBadgeStyles}>{data.options.length}</span>
+      </div>
+    );
+
     return (
       <div>
         <TopNavbar leftIconSrc="arrowleft" rightIconSrc="magnifying" leftRedirectRoute="/select" rightRedirectRoute="/search"/>
         <div style={style.pageContainer}>
+          {/* Selection Container */}
+          <div style={style.selectionContainer}>
+            <div style={style.halfContainer}>
+              <Select
+                options={eventOptions}
+                formatGroupLabel={formatGroupLabel}
+                placeholder="Event"
+                isClearable={true}
+                isSearchable={ false }
+                styles={{
+                  // https://stackoverflow.com/questions/55830799/how-to-change-zindex-in-react-select-drowpdown
+                  menu: provided => ({ ...provided, zIndex: 9999 })
+                }}
+                defaultValue={event == "" ? undefined : eventOptions.filter( v => v['value'] == event )[0]}
+                onChange={this.eventSelectChange}
+              />
+            </div>
+            <div style={style.halfContainer}>
+              <Select
+                options={attributeOptions}
+                formatGroupLabel={formatGroupLabel}
+                placeholder="Attribute"
+                isClearable={true}
+                isDisabled={event == "" || event == "checked_in" || event == "WorkshopEvent"}
+                value= {
+                  attribute == "" || attributeOptions == undefined ? 
+                  undefined : attributeOptions.filter( v => v['value'] == attribute )[0]
+                }
+                styles={{
+                  // https://stackoverflow.com/questions/55830799/how-to-change-zindex-in-react-select-drowpdown
+                  menu: provided => ({ ...provided, zIndex: 9999 })
+                }}
+                onChange={this.attributeSelectChange}
+                isSearchable={ false }
+              />
+            </div>
+          </div>
           <div>
             <QrReader
               style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
@@ -119,13 +245,13 @@ const style : { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     flexDirection: 'column',
     backgroundColor: 'white',
-    paddingTop: '10vh'
+    // paddingTop: '10vh'
   },
   selectionContainer: {
-    display: 'flex',
+    padding: '30px 10px',
+    marginBottom: "10px",
+    backgroundColor: "#FF7C93",
     width: '100vw',
-    height: '10vh',
-    justifyContent: 'space-around'
   },
   switchCameraContainer: {
     width: '80vw',
@@ -154,7 +280,35 @@ const style : { [key: string]: React.CSSProperties } = {
     paddingTop: 0,
     marginBottom: 20,
     borderBottom: '1px #DEDEDE solid',
+  },
+
+  // Default React-Select styles
+  groupBadgeStyles: {
+    backgroundColor: '#EBECF0',
+    borderRadius: '2em',
+    color: '#172B4D',
+    display: 'inline-block',
+    fontSize: 12,
+    fontWeight: 'normal',
+    lineHeight: '1',
+    minWidth: 1,
+    width: "200px;",
+    padding: '0.16666666666667em 0.5em',
+    textAlign: 'center',
+  },
+
+  // Default React-Select styles
+  groupStyles: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  halfContainer: {
+    width: "50%",
+    padding: "0px 5px",
+    display: "inline-block"
   }
+  
 };
 
 const mapStateToProps = state => ({
@@ -163,4 +317,8 @@ const mapStateToProps = state => ({
   userData: state.auth.userData,
 });
 
-export default connect(mapStateToProps)(QRScan);
+const mapDispatchToProps = dispatch => ({
+  updateSelection: (event:string, attribute:string) => dispatch(actions.updateSelection(event, attribute))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QRScan);
