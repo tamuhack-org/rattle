@@ -3,7 +3,7 @@ import { AuthActionTypes } from '../../types/actions';
 const INITIAL_STATE: object = {
   isLoggedIn: false,
   isLoading: false,
-  userData: {},
+  userData: undefined,
   error: undefined
 };
 
@@ -32,7 +32,7 @@ export default function auth(state = INITIAL_STATE, action: AuthActionTypes): ob
       };
     case 'LOGOUT':
       return {
-        userData: {},
+        userData: undefined,
         isLoading: false,
         isLoggedIn: false,
         error: undefined

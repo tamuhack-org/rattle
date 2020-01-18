@@ -8,12 +8,14 @@ import axios from 'axios';
 import Toast from './../../Components/toast';
 import TopNavbar from './../../Components/navbar';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
-import { QRData } from '../../types/TypeObjects';
+import { QRData, LoginData } from '../../types/TypeObjects';
+import { Redirect } from 'react-router-dom';
 
 interface IProps {
   event: string;
   token: number
   attribute: string;
+  userData: LoginData;
 }
 
 interface IState {
@@ -32,6 +34,8 @@ interface IState {
 
     modalVisible: boolean;
     participantData: QRData;
+
+    redirectToLogin: boolean;
 }
 
 class Selection extends React.PureComponent<IProps, IState> {
@@ -55,7 +59,9 @@ class Selection extends React.PureComponent<IProps, IState> {
           "email": "",
           "first_name": "",
           "last_name": ""
-        }
+        },
+
+        redirectToLogin: this.props.userData === undefined
     }
   }
 
@@ -128,7 +134,7 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     // Token taken from Redux State
     // This will get reset each server restart. This means you will have to visit the login page again.
-    var token = this.props.token
+    var token = this.props.userData.data.token;
 
     if(name && token) {
       return axios.get(
@@ -155,8 +161,13 @@ class Selection extends React.PureComponent<IProps, IState> {
   render() {
     var {
         name,
-        users
+        users,
+        redirectToLogin
     } = this.state;
+
+    if(redirectToLogin) {
+      return <Redirect to='/' />
+    }
 
     // Create the failure, success, and warning toast
     let failureToast = (this.state.searchFailed) ? (
@@ -234,7 +245,7 @@ const style : { [key: string]: React.CSSProperties } = {
 };
 
 const mapStateToProps = state => ({
-  token: (state.auth.userData.data) ? state.auth.userData.data.token : undefined
+  userData: state.auth.userData
   /*event: state.selection.eventName,
   attribute: state.selection.attribute,*/
 });
