@@ -8,6 +8,7 @@ import axios from 'axios';
 import Toast from './../../Components/toast';
 import TopNavbar from './../../Components/navbar';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
+import * as actions from '../../redux/actions/authActions';
 import { QRData, LoginData } from '../../types/TypeObjects';
 import { Redirect } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ interface IProps {
   token: number
   attribute: string;
   userData: LoginData;
+  logout: () => void;
 }
 
 interface IState {
@@ -166,6 +168,7 @@ class Selection extends React.PureComponent<IProps, IState> {
     } = this.state;
 
     if(redirectToLogin) {
+      this.props.logout();
       return <Redirect to='/' />
     }
 
@@ -252,6 +255,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   /*login: (email:string, password:string) => dispatch(actions.login(email, password))*/
+  logout: () => dispatch(actions.logout())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Selection);

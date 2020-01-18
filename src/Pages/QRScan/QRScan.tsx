@@ -7,7 +7,8 @@ import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppActions } from '../../types/actions';
-import * as actions from '../../redux/actions/selectionActions';
+import * as selectionActions from '../../redux/actions/selectionActions';
+import * as authActions from '../../redux/actions/authActions';
 import Button from 'react-bootstrap/Button';
 import Badge from 'react-bootstrap/Badge';
 import Rodal from 'rodal';
@@ -25,6 +26,7 @@ interface IProps {
   event: string;
   attribute: string;
   login: (email: string, password: string) => Promise<object>;
+  logout: () => void;
   updateSelection: (event: string, attribute: string) => Dispatch<AppActions>;
 }
 
@@ -154,6 +156,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
     } = this.state;
 
     if(redirectToLogin) {
+      this.props.logout();
       return <Redirect to='/' />
     }
 
@@ -326,7 +329,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  updateSelection: (event:string, attribute:string) => dispatch(actions.updateSelection(event, attribute))
+  updateSelection: (event:string, attribute:string) => dispatch(selectionActions.updateSelection(event, attribute)),
+  logout: () => dispatch(authActions.logout())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(QRScan);
