@@ -15,6 +15,7 @@ import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TopNavbar from './../../Components/navbar';
 import Select from 'react-select'
+import { Redirect } from 'react-router-dom';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -34,6 +35,7 @@ interface IState {
   delay: number;
   frontCamera: boolean;
   confirmVisible: boolean;
+  redirectToLogin: boolean;
 }
 
 class QRScan extends React.PureComponent<IProps, IState> {
@@ -49,7 +51,8 @@ class QRScan extends React.PureComponent<IProps, IState> {
     attribute: this.props.attribute,
     delay: 500, 
     frontCamera: true, 
-    confirmVisible: false}
+    confirmVisible: false,
+    redirectToLogin: this.props.userData === undefined}
   }
 
   handleScan = async (data: string) => {
@@ -146,8 +149,13 @@ class QRScan extends React.PureComponent<IProps, IState> {
   render() {
     var {
       event,
-      attribute
+      attribute,
+      redirectToLogin
     } = this.state;
+
+    if(redirectToLogin) {
+      return <Redirect to='/' />
+    }
 
     const cameraString = this.state.frontCamera ? 'user' : 'environment';
 

@@ -9,12 +9,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 import TopNavbar from './../../Components/navbar';
-import { throwStatement } from '@babel/types';
+import { LoginData } from '../../types/TypeObjects';
+import { throwStatement, thisExpression } from '@babel/types';
 
 
 interface IProps {
   event: string;
   attribute: string;
+  userData: LoginData,
   updateSelection: (event: string, attribute: string) => Dispatch<AppActions>;
 }
 
@@ -22,6 +24,7 @@ interface IState {
   event: string;
   attribute: string;
   redirectToScan: boolean;
+  redirectToLogin: boolean;
 }
 
 class Selection extends React.PureComponent<IProps, IState> {
@@ -32,6 +35,7 @@ class Selection extends React.PureComponent<IProps, IState> {
       event: this.props.event,
       attribute: this.props.attribute,
       redirectToScan: false,
+      redirectToLogin: this.props.userData === undefined
     }
   }
 
@@ -97,8 +101,13 @@ class Selection extends React.PureComponent<IProps, IState> {
     var {
       event,
       attribute,
-      redirectToScan
+      redirectToScan,
+      redirectToLogin
     } = this.state;
+
+    if(redirectToLogin) {
+      return <Redirect to='/' />
+    }
 
     if(redirectToScan) {
       return <Redirect to='/scan' />
@@ -209,6 +218,7 @@ const style : { [key: string]: React.CSSProperties } = {
 const mapStateToProps = state => ({
   event: state.selection.event,
   attribute: state.selection.attribute,
+  userData: state.auth.userData
 });
 
 const mapDispatchToProps = dispatch => ({
