@@ -88,16 +88,13 @@ class Selection extends React.PureComponent<IProps, IState> {
   }
 
   handleScanSubmit = () => {
-    if(this.state.event == 'checked_in') {
-      this.props.updateSelection("Check In", "");
-    } else if(this.state.event == 'WorkshopEvent') {
-      this.props.updateSelection("Workshop", "");
-    } else {
-      this.props.updateSelection(this.state.event, this.state.attribute);
-    }
-
+    this.props.updateSelection(this.state.event, this.state.attribute);
     this.setState({ redirectToScan: true });
     // TODO Alert user about invalid selection
+  }
+
+  isDisabled = () => {
+    
   }
 
   render() {

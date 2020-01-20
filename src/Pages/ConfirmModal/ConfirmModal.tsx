@@ -128,7 +128,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
     if(event === "checked_in") {
       await this.checkInUser();
-    } else if(event === "Workshop") {
+    } else if(event === "WorkshopEvent") {
       await this.registerWorkshop();
     } else {
       await this.registerFood();
@@ -136,7 +136,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   disableSubmit = () => {
-    if(this.props.event === "Check In") {
+    if(this.props.event === "checked_in") {
       return this.state.participantRegistered;
     }
 
@@ -150,6 +150,18 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
   render() {
     const disable = this.disableSubmit();
+
+    var eventName = this.props.event;
+    var attribute = this.props.attribute;
+
+    if(this.props.event === 'checked_in') {
+      eventName = "Check In";
+      attribute = "No Attribute";
+    } else if(this.props.event === 'WorkshopEvent') {
+      eventName = "Workshop";
+      attribute = "No Attribute";
+    }
+
     return (
     <div style={style.modalContainer}>
         <Rodal 
@@ -162,10 +174,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         >
           <div style={style.badgeContainer}>
             <Badge style={{ marginRight: 15, padding: 10, backgroundColor: '#FFD9D9', fontSize: 15 }}>
-              {this.props.event ? this.props.event : "No Event"}
+              {eventName}
             </Badge>
             <Badge style={{ padding: 10, backgroundColor: '#D9EFFF', fontSize: 15 }}>
-              {this.props.attribute ? this.props.attribute : "No Attribute"}
+              {attribute}
             </Badge>
           </div>
           <div>

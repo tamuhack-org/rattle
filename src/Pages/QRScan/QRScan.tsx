@@ -97,13 +97,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
   eventSelectChange = (option, actions) => {
     var val = option ? option.value : "";
     if(val !== "") {
-      if(val === "checked_in") {
-        this.props.updateSelection("Check In", "");
-      } else if(val === "WorkshopEvent") {
-        this.props.updateSelection("Workshop", "");
-      } else {
-        this.props.updateSelection(val, "NONE");
-      }
+      this.props.updateSelection(val, "NONE");
     }
     
     this.setState({
