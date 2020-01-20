@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.js": "/rattle/static/js/main.89c4c1ab.chunk.js",
-    "main.js.map": "/rattle/static/js/main.89c4c1ab.chunk.js.map",
+    "main.js": "/rattle/static/js/main.a4b139a5.chunk.js",
+    "main.js.map": "/rattle/static/js/main.a4b139a5.chunk.js.map",
     "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
     "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
     "static/css/2.a2481488.chunk.css": "/rattle/static/css/2.a2481488.chunk.css",
     "static/js/2.f0577ed3.chunk.js": "/rattle/static/js/2.f0577ed3.chunk.js",
     "static/js/2.f0577ed3.chunk.js.map": "/rattle/static/js/2.f0577ed3.chunk.js.map",
     "index.html": "/rattle/index.html",
-    "precache-manifest.52b90a9fe2a5327a87a72536654dd841.js": "/rattle/precache-manifest.52b90a9fe2a5327a87a72536654dd841.js",
+    "precache-manifest.78f942438cf5125ed7e403d6b1c49425.js": "/rattle/precache-manifest.78f942438cf5125ed7e403d6b1c49425.js",
     "service-worker.js": "/rattle/service-worker.js",
     "static/css/2.a2481488.chunk.css.map": "/rattle/static/css/2.a2481488.chunk.css.map",
     "static/js/2.f0577ed3.chunk.js.LICENSE": "/rattle/static/js/2.f0577ed3.chunk.js.LICENSE",
@@ -24,6 +24,6 @@
     "static/js/runtime-main.601eb6f8.js",
     "static/css/2.a2481488.chunk.css",
     "static/js/2.f0577ed3.chunk.js",
-    "static/js/main.89c4c1ab.chunk.js"
+    "static/js/main.a4b139a5.chunk.js"
   ]
 }
