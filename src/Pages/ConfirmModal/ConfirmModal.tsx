@@ -153,10 +153,12 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
     var eventName = this.props.event;
     var attribute = this.props.attribute;
+    var buttonTitle = "Scan";
 
     if(this.props.event === 'checked_in') {
       eventName = "Check In";
       attribute = "No Attribute";
+      buttonTitle = "Check In";
     } else if(this.props.event === 'WorkshopEvent') {
       eventName = "Workshop";
       attribute = "No Attribute";
@@ -201,7 +203,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
             disabled={disable}
             onClick={this.checkInEvent}
           >
-            Check In
+            {buttonTitle}
           </Button>
         </Rodal>
       </div>
