@@ -88,13 +88,13 @@ class Selection extends React.PureComponent<IProps, IState> {
   }
 
   handleScanSubmit = () => {
-    // TODO may have to change logic depending on Event and Attribute
-    if(this.state.event !== "" && this.state.attribute !== "") {
-      this.props.updateSelection(this.state.event, this.state.attribute);
-      this.setState({ redirectToScan: true });
-    }
-
+    this.props.updateSelection(this.state.event, this.state.attribute);
+    this.setState({ redirectToScan: true });
     // TODO Alert user about invalid selection
+  }
+
+  isDisabled = () => {
+    
   }
 
   render() {

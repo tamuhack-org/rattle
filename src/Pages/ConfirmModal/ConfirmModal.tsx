@@ -30,6 +30,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   getRegisteredStatus = async (email: string) => {
+    if (!this.props.modalVisible) {
+      return false;
+    }
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
 
     let registeredStatus = false;
@@ -52,6 +55,54 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     return registeredStatus;
   }
 
+  registerFood = async () => {
+    const checkInFood = "https://register.tamuhack.com/api/volunteer/food";
+
+    await axios.post(checkInFood, 
+      {
+        "email": this.props.qrData.email,
+        "meal": this.props.event,
+        "restrictions": this.props.attribute
+      },
+      {
+      headers: {
+        authorization: "Token " + this.props.userData.data.token,
+        "content-type": "application/json"
+      }
+    }).then(response => {
+      // TODO
+      // show valid
+      console.log(response);
+    }).catch(exception => {
+      // TODO
+      // show invalid
+      console.log(exception);
+    });
+  };
+
+  registerWorkshop = async () => {
+    const checkInWorkshop = "https://register.tamuhack.com/api/volunteer/workshops";
+
+    await axios.post(checkInWorkshop, 
+      {
+        "email": this.props.qrData.email,
+      },
+      {
+      headers: {
+        authorization: "Token " + this.props.userData.data.token,
+        "content-type": "application/json"
+      }
+    }).then(response => {
+      // TODO 
+      // Show valid response
+      console.log(response);
+    }).catch(exception => {
+      // TODO
+      // Show invalid response
+      console.log(exception);
+    });
+  }
+
   checkInUser = async () => {
     const checkInUrl = "https://register.tamuhack.com/api/volunteer/checkin";
 
@@ -70,6 +121,26 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       this.setState({participantRegistered: false});
       console.log(exception);
     });
+  };
+
+  checkInEvent = async () => {
+    const event = this.props.event;
+
+    if(event === "checked_in") {
+      await this.checkInUser();
+    } else if(event === "WorkshopEvent") {
+      await this.registerWorkshop();
+    } else {
+      await this.registerFood();
+    }
+  }
+
+  disableSubmit = () => {
+    if(this.props.event === "checked_in") {
+      return this.state.participantRegistered;
+    }
+
+    return !this.state.participantRegistered;
   }
 
   async componentDidUpdate() {
@@ -78,6 +149,21 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   render() {
+    const disable = this.disableSubmit();
+
+    var eventName = this.props.event;
+    var attribute = this.props.attribute;
+    var buttonTitle = "Scan";
+
+    if(this.props.event === 'checked_in') {
+      eventName = "Check In";
+      attribute = "No Attribute";
+      buttonTitle = "Check In";
+    } else if(this.props.event === 'WorkshopEvent') {
+      eventName = "Workshop";
+      attribute = "No Attribute";
+    }
+
     return (
     <div style={style.modalContainer}>
         <Rodal 
@@ -90,10 +176,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         >
           <div style={style.badgeContainer}>
             <Badge style={{ marginRight: 15, padding: 10, backgroundColor: '#FFD9D9', fontSize: 15 }}>
-              {this.props.event ? this.props.event : "No Event"}
+              {eventName}
             </Badge>
             <Badge style={{ padding: 10, backgroundColor: '#D9EFFF', fontSize: 15 }}>
-              {this.props.attribute ? this.props.attribute : "No Attribute"}
+              {attribute}
             </Badge>
           </div>
           <div>
@@ -114,10 +200,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           </div>
           <Button
             style={style.confirmButton}
-            disabled={this.state.participantRegistered}
-            onClick={this.checkInUser}
+            disabled={disable}
+            onClick={this.checkInEvent}
           >
-            Check In
+            {buttonTitle}
           </Button>
         </Rodal>
       </div>

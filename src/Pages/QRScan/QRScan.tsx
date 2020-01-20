@@ -97,8 +97,9 @@ class QRScan extends React.PureComponent<IProps, IState> {
   eventSelectChange = (option, actions) => {
     var val = option ? option.value : "";
     if(val !== "") {
-      this.props.updateSelection(val, this.props.attribute);
+      this.props.updateSelection(val, "NONE");
     }
+    
     this.setState({
       event: val,
       // Every event has a none options so this is the default. Stylistic change 
@@ -231,7 +232,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
             <Button
               style={style.switchCameraContainer}
               onClick={this.switchCamera}>
-              Switch
+              Switch Camera
             </Button>
           </div>
           <ConfirmModal 
@@ -263,6 +264,10 @@ const style : { [key: string]: React.CSSProperties } = {
   },
   switchCameraContainer: {
     width: '80vw',
+    height: '56px',
+    backgroundColor: '#FF7C93',
+    border: 0,
+    outline: 0
   },
   modalContainer: {
     display: 'flex',
