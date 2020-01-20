@@ -30,6 +30,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   getRegisteredStatus = async (email: string) => {
+    if (!this.props.modalVisible) {
+      return false;
+    }
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
 
     let registeredStatus = false;
@@ -52,6 +55,54 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     return registeredStatus;
   }
 
+  registerFood = async () => {
+    const checkInFood = "https://register.tamuhack.com/api/volunteer/food";
+
+    await axios.post(checkInFood, 
+      {
+        "email": this.props.qrData.email,
+        "meal": this.props.event,
+        "restrictions": this.props.attribute
+      },
+      {
+      headers: {
+        authorization: "Token " + this.props.userData.data.token,
+        "content-type": "application/json"
+      }
+    }).then(response => {
+      // TODO
+      // show valid
+      console.log(response);
+    }).catch(exception => {
+      // TODO
+      // show invalid
+      console.log(exception);
+    });
+  };
+
+  registerWorkshop = async () => {
+    const checkInWorkshop = "https://register.tamuhack.com/api/volunteer/workshops";
+
+    await axios.post(checkInWorkshop, 
+      {
+        "email": this.props.qrData.email,
+      },
+      {
+      headers: {
+        authorization: "Token " + this.props.userData.data.token,
+        "content-type": "application/json"
+      }
+    }).then(response => {
+      // TODO 
+      // Show valid response
+      console.log(response);
+    }).catch(exception => {
+      // TODO
+      // Show invalid response
+      console.log(exception);
+    });
+  }
+
   checkInUser = async () => {
     const checkInUrl = "https://register.tamuhack.com/api/volunteer/checkin";
 
@@ -70,6 +121,26 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       this.setState({participantRegistered: false});
       console.log(exception);
     });
+  };
+
+  checkInEvent = async () => {
+    const event = this.props.event;
+
+    if(event === "checked_in") {
+      await this.checkInUser();
+    } else if(event === "Workshop") {
+      await this.registerWorkshop();
+    } else {
+      await this.registerFood();
+    }
+  }
+
+  disableSubmit = () => {
+    if(this.props.event === "Check In") {
+      return this.state.participantRegistered;
+    }
+
+    return !this.state.participantRegistered;
   }
 
   async componentDidUpdate() {
@@ -78,6 +149,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   render() {
+    const disable = this.disableSubmit();
     return (
     <div style={style.modalContainer}>
         <Rodal 
@@ -114,8 +186,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           </div>
           <Button
             style={style.confirmButton}
-            disabled={this.state.participantRegistered}
-            onClick={this.checkInUser}
+            disabled={disable}
+            onClick={this.checkInEvent}
           >
             Check In
           </Button>
