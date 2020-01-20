@@ -1,16 +1,12 @@
-import React, { CSSProperties } from 'react';
-import axios from 'axios';
+import React from 'react';
 import QrReader from 'react-qr-reader';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
-import Search from '../Search/Search';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppActions } from '../../types/actions';
 import * as actions from '../../redux/actions/selectionActions';
 import Button from 'react-bootstrap/Button';
-import Badge from 'react-bootstrap/Badge';
-import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import TopNavbar from './../../Components/navbar';
@@ -67,17 +63,13 @@ class QRScan extends React.PureComponent<IProps, IState> {
 
         this.setState({ qrData: qrObj, confirmVisible: true });
       } else {
-        console.log("QR code has invalid properties!");
+        // TODO
+        // Toast for Valid code with invalid properties
       }
     } catch (exception) {
-      console.log(exception)
       // TODO 
       // Toast for invalid QR Code
     }
-  }
-
-  handleError = (error) => {
-    
   }
 
   switchCamera = () => {
@@ -225,7 +217,6 @@ class QRScan extends React.PureComponent<IProps, IState> {
             <QrReader
               style={{width: '100%', marginBottom: 20, alignItems: 'center', alignSelf: 'center', justifyContent: 'center'}}
               delay={this.state.delay}
-              onError={this.handleError}
               onScan={this.handleScan}
               facingMode={cameraString}
             />

@@ -1,12 +1,10 @@
 import React from 'react';
-import QrReader from 'react-qr-reader';
 import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/actions/authActions';
 import { LoginData } from '../../types/TypeObjects';
 import { Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import {generateToast} from './../../Components/toast';
 import Toast from './../../Components/toast';
 
 interface IProps {

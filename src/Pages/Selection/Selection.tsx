@@ -1,5 +1,4 @@
 import React from 'react';
-import QrReader from 'react-qr-reader';
 import { Redirect } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -10,7 +9,6 @@ import Select from 'react-select'
 import Button from 'react-bootstrap/Button';
 import TopNavbar from './../../Components/navbar';
 import { LoginData } from '../../types/TypeObjects';
-import { throwStatement, thisExpression } from '@babel/types';
 
 
 interface IProps {
