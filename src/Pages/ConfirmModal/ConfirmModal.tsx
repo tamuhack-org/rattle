@@ -1,5 +1,4 @@
 import React, { CSSProperties } from 'react';
-import QrReader from 'react-qr-reader';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -47,9 +46,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     ).then(response => {
       registeredStatus = response.data.checked_in;
     }).catch(error => {
-      // TODO make a toast
-      // API Call failed
-      console.log(error);
+      // TODO
+      // show exception in toast
     });
 
     return registeredStatus;
@@ -71,12 +69,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       }
     }).then(response => {
       // TODO
-      // show valid
-      console.log(response);
+      // show success toast
     }).catch(exception => {
       // TODO
-      // show invalid
-      console.log(exception);
+      // show exception in toast
     });
   };
 
@@ -94,12 +90,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       }
     }).then(response => {
       // TODO 
-      // Show valid response
-      console.log(response);
+      // Show success in toast
     }).catch(exception => {
       // TODO
-      // Show invalid response
-      console.log(exception);
+      // Show exception in toast
     });
   }
 
@@ -118,8 +112,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     }).then(response => {
       this.setState({ participantRegistered: true });
     }).catch(exception => {
+      // TODO 
+      // Show exception in toast
       this.setState({participantRegistered: false});
-      console.log(exception);
     });
   };
 
