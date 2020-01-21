@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { LoginData, QRData } from '../../types/TypeObjects';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -20,21 +20,24 @@ interface IProps {
 
 interface IState {
   participantRegistered: boolean;
+  foodRestrictions: string;
 }
 
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false};
+    this.state = {participantRegistered: false, foodRestrictions: "None"};
   }
 
-  getRegisteredStatus = async (email: string) => {
-    if (!this.props.modalVisible) {
-      return false;
-    }
-    var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
-
+  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions}> => {
     let registeredStatus = false;
+    let foodRestrictions = "None";
+
+    if (!this.props.modalVisible) {
+      return {registeredStatus, foodRestrictions};
+    }
+
+    var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
     await axios.get(
       checkInStatusUrl,
       {
@@ -45,12 +48,13 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       }
     ).then(response => {
       registeredStatus = response.data.checked_in;
+      foodRestrictions = response.data.restrictions;
     }).catch(error => {
       // TODO
       // show exception in toast
     });
 
-    return registeredStatus;
+    return {registeredStatus, foodRestrictions};
   }
 
   registerFood = async () => {
@@ -139,15 +143,15 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   async componentDidUpdate() {
-    const isRegistered = await this.getRegisteredStatus(this.props.qrData.email);
-    this.setState({ participantRegistered: isRegistered });
+    const {registeredStatus, foodRestrictions} = await this.getRegisteredStatus(this.props.qrData.email);
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions });
   }
 
   render() {
     const disable = this.disableSubmit();
 
     var eventName = this.props.event;
-    var attribute = this.props.attribute;
+    var attribute = this.state.foodRestrictions;
     var buttonTitle = "Scan";
 
     if(this.props.event === 'checked_in') {
