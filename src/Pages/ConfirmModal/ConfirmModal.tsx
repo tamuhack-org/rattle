@@ -211,7 +211,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
               {this.state.participantRegistered ? 'CHECKED IN' : 'NOT CHECKED IN'}
             </p>
           </div>
-          <Button
+          <Button block
             style={style.confirmButton}
             disabled={disable}
             onClick={this.checkInEvent}
@@ -254,7 +254,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
             borderBottom: '1px #DEDEDE solid',
         },
         confirmButton: {
-            display: 'flex', 
+            // display: 'flex', Firefox issues
             justifyContent: 'center', 
             width: '100%', 
             height: '60px', 

@@ -167,7 +167,7 @@ class Selection extends React.PureComponent<IProps, IState> {
                             <h5 style={{margin: "0px"}}>
                                 {user.first_name} {user.last_name}
                                 <span style={{float: 'right', marginTop: "4px"}}>
-                                  <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                                  <svg style={{width: "40px", height: "40px"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
                                 </span>
                             </h5>
                             <p style={{margin: "0px"}}>
