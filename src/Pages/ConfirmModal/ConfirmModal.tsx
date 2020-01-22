@@ -8,6 +8,9 @@ import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import {commonToastProperties} from './../../Components/toast';
+import { toast, ToastContainer } from 'react-toastify';
+
 interface IProps {
   userData: LoginData;
   event: string;
@@ -47,11 +50,26 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
          },
       }
     ).then(response => {
+      // Potential Bug: This route gets sent two times. 
+      // This makes the toast kind of look ugly. Not critical though
+      toast.dismiss(); // Prevents a second toast from sending
+      if(!response.data.checked_in && this.props.event != "checked_in") {
+        // Set to top-center to make it look nicer. Optional
+        toast.error("User is not checked in.", {...commonToastProperties, autoClose: 3000, position:"top-center"});
+      }
+      if (
+        this.props.event != "checked_in" && 
+        this.props.event != "WorkshopEvent" &&
+        this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
+        // !(this.props.attribute.toLowerCase() == 'none' && response.data.restrictions.toLowerCase() == 'other')
+      ) {
+        // Set to top-center to make it look nicer. Optional
+        toast.warn("Food restrictions do not match.", {...commonToastProperties, autoClose: 3000, position:"top-center"});
+      }
       registeredStatus = response.data.checked_in;
       foodRestrictions = response.data.restrictions;
-    }).catch(error => {
-      // TODO
-      // show exception in toast
+    }).catch(exception => {
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
     return {registeredStatus, foodRestrictions};
@@ -72,11 +90,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
-      // TODO
-      // show success toast
+      toast.success("User scan successful.", commonToastProperties);
     }).catch(exception => {
-      // TODO
-      // show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
   };
 
@@ -93,11 +109,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
-      // TODO 
-      // Show success in toast
+      toast.success("User scan successful.", commonToastProperties);
     }).catch(exception => {
-      // TODO
-      // Show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
   }
 
@@ -114,10 +128,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
+      toast.success("User scan successful.", commonToastProperties);
       this.setState({ participantRegistered: true });
     }).catch(exception => {
-      // TODO 
-      // Show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
       this.setState({participantRegistered: false});
     });
   };
@@ -204,7 +218,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           >
             {buttonTitle}
           </Button>
+
         </Rodal>
+        <ToastContainer autoClose={1500} />
       </div>
       );
     }

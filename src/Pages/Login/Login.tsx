@@ -5,7 +5,8 @@ import * as actions from '../../redux/actions/authActions';
 import { LoginData } from '../../types/TypeObjects';
 import { Redirect } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Toast from './../../Components/toast';
+import {commonToastProperties} from './../../Components/toast';
+import { toast, ToastContainer } from 'react-toastify';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -21,12 +22,6 @@ interface IState {
   password: string;
   submitColor: string;
   redirectToSelection: boolean;
-
-  // Added state for the toast
-  loginFailed: boolean;
-  loginSuccess: boolean;
-  currentToastID: number;
-  toastText: string;
 }
 
 class Login extends React.PureComponent<IProps, IState> {
@@ -39,43 +34,19 @@ class Login extends React.PureComponent<IProps, IState> {
       email: "", 
       password: "", 
       submitColor: '#FF7C93', 
-      redirectToSelection: false, 
-      loginFailed: false, 
-      loginSuccess: false,
-      currentToastID: 0, 
-      toastText: ""
+      redirectToSelection: false 
     };
-    // this.props.logout();
-  }
-
-  createFailureToast() {
-    // Create a new toast by toggling the state
-    this.setState({
-      loginFailed: true,
-      loginSuccess: false,
-      toastText: "Failed to login!",
-      // Toasts need a unique ID to know when to render
-      currentToastID: this.state.currentToastID + 1
-    })
-  }
-
-  createSuccessToast() {
-    // Create a new toast by toggling the state
-    this.setState({
-      loginSuccess: true,
-      loginFailed: false,
-      toastText: "Login successfuly!",
-      // Toasts need a unique ID to know when to render
-      currentToastID: this.state.currentToastID + 1
-    })
   }
 
   login() {
     this.props.login(this.state.email, this.state.password).then(() => {
       if(this.props.error) {
-        this.createFailureToast()
+        toast.error("Login Failed", commonToastProperties);
       } else {
-        this.createSuccessToast()
+        toast.success("Login Successful", {
+          ...commonToastProperties, 
+          onClose: () => this.setState({ redirectToSelection: true })
+        });
       }
     });
   }
@@ -96,16 +67,6 @@ class Login extends React.PureComponent<IProps, IState> {
         <Redirect to='/select'/>
       )
     }
-
-    // Create the success and failure toast
-    let failureToast = (this.state.loginFailed) ? (
-      <Toast type="error" text={this.state.toastText} id={this.state.currentToastID}/>
-    ) : undefined;
-
-    let successToast = (this.state.loginSuccess) ? (
-      // Note, the call back will reload page and cause the page to redirect once toast is finished. 
-      <Toast type="success" text={this.state.toastText} id={this.state.currentToastID} callback={() => this.setState({ redirectToSelection: true })}/>
-    ) : undefined;
 
     return (
       <div style={style.pageContainer}>
@@ -140,9 +101,10 @@ class Login extends React.PureComponent<IProps, IState> {
           </Button>
 
           {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
-          {failureToast}
+          {/* {failureToast}
           {successToast}
-
+          {console.log(failureToast, successToast)} */}
+          <ToastContainer autoClose={1500} />
         </form>
       </div>
     );
