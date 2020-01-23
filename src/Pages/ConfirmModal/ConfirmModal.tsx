@@ -24,20 +24,22 @@ interface IProps {
 interface IState {
   participantRegistered: boolean;
   foodRestrictions: string;
+  applicationStatus: string;
 }
 
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false, foodRestrictions: "None"};
+    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: ""};
   }
 
-  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions}> => {
+  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, applicationStatus}> => {
     let registeredStatus = false;
     let foodRestrictions = "None";
+    let applicationStatus = ""
 
     if (!this.props.modalVisible) {
-      return {registeredStatus, foodRestrictions};
+      return {registeredStatus, foodRestrictions, applicationStatus};
     }
 
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
@@ -55,8 +57,16 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       toast.dismiss(); // Prevents a second toast from sending
       if(!response.data.checked_in && this.props.event != "checked_in") {
         // Set to top-center to make it look nicer. Optional
-        toast.error("User is not checked in.", {...commonToastProperties, autoClose: 3000, position:"top-center"});
+        toast.warn("User is not checked in.", {...commonToastProperties, autoClose: 4000});
       }
+
+      if(
+        this.props.event == "checked_in" &&
+        ( response.data.status != "I" || response.data.status != "C")
+      ) {
+        toast.warn("User status not authorized.", {...commonToastProperties, autoClose: 4000});
+      }
+
       if (
         this.props.event != "checked_in" && 
         this.props.event != "WorkshopEvent" &&
@@ -64,15 +74,16 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         // !(this.props.attribute.toLowerCase() == 'none' && response.data.restrictions.toLowerCase() == 'other')
       ) {
         // Set to top-center to make it look nicer. Optional
-        toast.warn("Food restrictions do not match.", {...commonToastProperties, autoClose: 3000, position:"top-center"});
+        toast.warn("Food restrictions do not match.", {...commonToastProperties, autoClose: 4000, position:"top-center"});
       }
       registeredStatus = response.data.checked_in;
       foodRestrictions = response.data.restrictions;
+      applicationStatus = response.data.status;
     }).catch(exception => {
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
-    return {registeredStatus, foodRestrictions};
+    return {registeredStatus, foodRestrictions, applicationStatus};
   }
 
   registerFood = async () => {
@@ -157,8 +168,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   async componentDidUpdate() {
-    const {registeredStatus, foodRestrictions} = await this.getRegisteredStatus(this.props.qrData.email);
-    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions });
+    const {registeredStatus, foodRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus });
   }
 
   render() {
@@ -175,6 +186,16 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     } else if(this.props.event === 'WorkshopEvent') {
       eventName = "Workshop";
       attribute = "No Attribute";
+    }
+
+    var applicationStateText = {
+      "P": "PENDING",
+      "R": "REJECTED",
+      "A": "ADMITTED",
+      "C": "NOT CHECKED IN",
+      "X": "DECLINED",
+      "I": "CHECKED IN",
+      "E": "EXPIRED"
     }
 
     return (
@@ -208,7 +229,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           </div>
           <div style={{...style.checkInStatusRow, borderColor: this.state.participantRegistered ? '#5CD059' : '#FFBFBF', fontSize: 20}}>
             <p style={{ display: 'flex', margin: 0, padding: 0}}>
-              {this.state.participantRegistered ? 'CHECKED IN' : 'NOT CHECKED IN'}
+              {applicationStateText[this.state.applicationStatus]}
+              {/* {this.state.participantRegistered ? 'CHECKED IN' : 'NOT CHECKED IN'} */}
             </p>
           </div>
           <Button block
