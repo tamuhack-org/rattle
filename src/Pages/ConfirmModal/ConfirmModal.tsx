@@ -62,7 +62,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
       if(
         this.props.event == "checked_in" &&
-        ( response.data.status != "I" || response.data.status != "C")
+        !(response.data.status == "I" || response.data.status == "C")
       ) {
         toast.warn("User status not authorized.", {...commonToastProperties, autoClose: 4000});
       }
