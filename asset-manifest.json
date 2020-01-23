@@ -1,29 +1,29 @@
 {
   "files": {
-    "main.js": "/rattle/static/js/main.bdde5256.chunk.js",
-    "main.js.map": "/rattle/static/js/main.bdde5256.chunk.js.map",
+    "main.js": "/rattle/static/js/main.b3f05a5d.chunk.js",
+    "main.js.map": "/rattle/static/js/main.b3f05a5d.chunk.js.map",
     "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
     "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
     "static/css/2.a2481488.chunk.css": "/rattle/static/css/2.a2481488.chunk.css",
-    "static/js/2.595908a4.chunk.js": "/rattle/static/js/2.595908a4.chunk.js",
-    "static/js/2.595908a4.chunk.js.map": "/rattle/static/js/2.595908a4.chunk.js.map",
+    "static/js/2.d154b2c5.chunk.js": "/rattle/static/js/2.d154b2c5.chunk.js",
+    "static/js/2.d154b2c5.chunk.js.map": "/rattle/static/js/2.d154b2c5.chunk.js.map",
     "index.html": "/rattle/index.html",
-    "precache-manifest.481a775e61645d132a50320125d8856f.js": "/rattle/precache-manifest.481a775e61645d132a50320125d8856f.js",
+    "precache-manifest.5728fb971d6fbc74c5a65b367b06d8bc.js": "/rattle/precache-manifest.5728fb971d6fbc74c5a65b367b06d8bc.js",
     "service-worker.js": "/rattle/service-worker.js",
     "static/css/2.a2481488.chunk.css.map": "/rattle/static/css/2.a2481488.chunk.css.map",
-    "static/js/2.595908a4.chunk.js.LICENSE": "/rattle/static/js/2.595908a4.chunk.js.LICENSE",
-    "static/media/arrowleft.svg": "/rattle/static/media/arrowleft.15dfedc6.svg",
-    "static/media/arrowright.svg": "/rattle/static/media/arrowright.9a8c6bff.svg",
-    "static/media/hiss.svg": "/rattle/static/media/hiss.768b0a92.svg",
-    "static/media/hiss_full_logo.svg": "/rattle/static/media/hiss_full_logo.396f0bda.svg",
-    "static/media/isymbol.svg": "/rattle/static/media/isymbol.3f17aa2f.svg",
-    "static/media/logout.svg": "/rattle/static/media/logout.9a8c6bff.svg",
-    "static/media/magnifying.svg": "/rattle/static/media/magnifying.c6fbba9a.svg"
+    "static/js/2.d154b2c5.chunk.js.LICENSE": "/rattle/static/js/2.d154b2c5.chunk.js.LICENSE",
+    "static/media/arrowleft.svg": "/rattle/static/media/arrowleft.05e4d747.svg",
+    "static/media/arrowright.svg": "/rattle/static/media/arrowright.354874ba.svg",
+    "static/media/hiss.svg": "/rattle/static/media/hiss.225cb576.svg",
+    "static/media/hiss_full_logo.svg": "/rattle/static/media/hiss_full_logo.d26ff6ed.svg",
+    "static/media/isymbol.svg": "/rattle/static/media/isymbol.3c20c3ff.svg",
+    "static/media/logout.svg": "/rattle/static/media/logout.354874ba.svg",
+    "static/media/magnifying.svg": "/rattle/static/media/magnifying.0874efde.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.601eb6f8.js",
     "static/css/2.a2481488.chunk.css",
-    "static/js/2.595908a4.chunk.js",
-    "static/js/main.bdde5256.chunk.js"
+    "static/js/2.d154b2c5.chunk.js",
+    "static/js/main.b3f05a5d.chunk.js"
   ]
 }
