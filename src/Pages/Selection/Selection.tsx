@@ -39,6 +39,15 @@ class Selection extends React.PureComponent<IProps, IState> {
     }
   }
 
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
+    }
+  }
+
 
   // Gets called every time the first select form has an option change.
   eventSelectChange = (option, actions) => {
@@ -111,14 +120,6 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     if(redirectToScan) {
       return <Redirect to='/scan' />
-    }
-
-    if(this.props.userData === undefined) {
-      console.log('ERROR')
-      toast.error("Not Logged In", {
-        ...commonToastProperties, 
-        onClose: () => this.setState({ redirectToLogin: true })
-      });
     }
 
     // https://github.com/tamuhack-org/Ouroboros/blob/d1bafcdfaf6b54eaf7bf9a6720373e0bd3ec8855/hiss/volunteer/views.py

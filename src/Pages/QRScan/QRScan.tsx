@@ -54,6 +54,15 @@ class QRScan extends React.PureComponent<IProps, IState> {
     redirectToLogin: false}
   }
 
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
+    }
+  }
+
   handleScan = async (data: string) => {
     if(data === null || this.state.confirmVisible) {
       return;
@@ -149,14 +158,6 @@ class QRScan extends React.PureComponent<IProps, IState> {
 
     if(redirectToLogin) {
       return <Redirect to='/' />
-    }
-
-    if(this.props.userData === undefined) {
-      console.log('ERROR')
-      toast.error("Not Logged In", {
-        ...commonToastProperties, 
-        onClose: () => this.setState({ redirectToLogin: true })
-      });
     }
 
     const cameraString = this.state.frontCamera ? 'user' : 'environment';

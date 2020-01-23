@@ -57,6 +57,15 @@ class Selection extends React.PureComponent<IProps, IState> {
     }
   }
 
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
+    }
+  }
+
   showModal = () => {
     this.setState({ modalVisible: true });
   }
@@ -86,13 +95,7 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     // Token taken from Redux State
     // This will get reset each server restart. This means you will have to visit the login page again.
-    if(this.props.userData === undefined) {
-      toast.error("Not Logged In", {
-        ...commonToastProperties, 
-        onClose: () => this.setState({ redirectToLogin: true })
-      });
-      return;
-    }
+ 
     var token = this.props.userData.data.token;
 
     if(name && token) {
