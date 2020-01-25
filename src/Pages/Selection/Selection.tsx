@@ -10,6 +10,8 @@ import Button from 'react-bootstrap/Button';
 import TopNavbar from './../../Components/navbar';
 import { LoginData } from '../../types/TypeObjects';
 
+import { toast, ToastContainer } from 'react-toastify';
+import { commonToastProperties } from './../../Components/toast';
 
 interface IProps {
   event: string;
@@ -33,7 +35,16 @@ class Selection extends React.PureComponent<IProps, IState> {
       event: this.props.event,
       attribute: this.props.attribute,
       redirectToScan: false,
-      redirectToLogin: this.props.userData === undefined
+      redirectToLogin: false // this.props.userData === undefined
+    }
+  }
+
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
     }
   }
 
@@ -177,6 +188,8 @@ class Selection extends React.PureComponent<IProps, IState> {
             Start Scanning
           </Button>
         </div>
+
+        <ToastContainer autoClose={1500} />
       </div>
     );
   }

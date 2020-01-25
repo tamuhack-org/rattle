@@ -8,6 +8,9 @@ import Rodal from 'rodal';
 import 'rodal/lib/rodal.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import {commonToastProperties} from './../../Components/toast';
+import { toast, ToastContainer } from 'react-toastify';
+
 interface IProps {
   userData: LoginData;
   event: string;
@@ -21,20 +24,22 @@ interface IProps {
 interface IState {
   participantRegistered: boolean;
   foodRestrictions: string;
+  applicationStatus: string;
 }
 
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false, foodRestrictions: "None"};
+    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: ""};
   }
 
-  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions}> => {
+  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, applicationStatus}> => {
     let registeredStatus = false;
     let foodRestrictions = "None";
+    let applicationStatus = ""
 
     if (!this.props.modalVisible) {
-      return {registeredStatus, foodRestrictions};
+      return {registeredStatus, foodRestrictions, applicationStatus};
     }
 
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
@@ -47,14 +52,38 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
          },
       }
     ).then(response => {
+      // Potential Bug: This route gets sent two times. 
+      // This makes the toast kind of look ugly. Not critical though
+      toast.dismiss(); // Prevents a second toast from sending
+      if(!response.data.checked_in && this.props.event != "checked_in") {
+        // Set to top-center to make it look nicer. Optional
+        toast.warn("User is not checked in.", {...commonToastProperties, autoClose: 4000});
+      }
+
+      if(
+        this.props.event == "checked_in" &&
+        !(response.data.status == "I" || response.data.status == "C")
+      ) {
+        toast.warn("User status not authorized.", {...commonToastProperties, autoClose: 4000});
+      }
+
+      if (
+        this.props.event != "checked_in" && 
+        this.props.event != "WorkshopEvent" &&
+        this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
+        // !(this.props.attribute.toLowerCase() == 'none' && response.data.restrictions.toLowerCase() == 'other')
+      ) {
+        // Set to top-center to make it look nicer. Optional
+        toast.warn("Food restrictions do not match.", {...commonToastProperties, autoClose: 4000, position:"top-center"});
+      }
       registeredStatus = response.data.checked_in;
       foodRestrictions = response.data.restrictions;
-    }).catch(error => {
-      // TODO
-      // show exception in toast
+      applicationStatus = response.data.status;
+    }).catch(exception => {
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
-    return {registeredStatus, foodRestrictions};
+    return {registeredStatus, foodRestrictions, applicationStatus};
   }
 
   registerFood = async () => {
@@ -72,11 +101,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
-      // TODO
-      // show success toast
+      toast.success("User scan successful.", commonToastProperties);
     }).catch(exception => {
-      // TODO
-      // show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
   };
 
@@ -93,11 +120,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
-      // TODO 
-      // Show success in toast
+      toast.success("User scan successful.", commonToastProperties);
     }).catch(exception => {
-      // TODO
-      // Show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
   }
 
@@ -114,10 +139,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
+      toast.success("User scan successful.", commonToastProperties);
       this.setState({ participantRegistered: true });
     }).catch(exception => {
-      // TODO 
-      // Show exception in toast
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
       this.setState({participantRegistered: false});
     });
   };
@@ -143,8 +168,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   async componentDidUpdate() {
-    const {registeredStatus, foodRestrictions} = await this.getRegisteredStatus(this.props.qrData.email);
-    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions });
+    const {registeredStatus, foodRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus });
   }
 
   render() {
@@ -161,6 +186,16 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     } else if(this.props.event === 'WorkshopEvent') {
       eventName = "Workshop";
       attribute = "No Attribute";
+    }
+
+    var applicationStateText = {
+      "P": "PENDING",
+      "R": "REJECTED",
+      "A": "ADMITTED",
+      "C": "NOT CHECKED IN",
+      "X": "DECLINED",
+      "I": "CHECKED IN",
+      "E": "EXPIRED"
     }
 
     return (
@@ -194,17 +229,20 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           </div>
           <div style={{...style.checkInStatusRow, borderColor: this.state.participantRegistered ? '#5CD059' : '#FFBFBF', fontSize: 20}}>
             <p style={{ display: 'flex', margin: 0, padding: 0}}>
-              {this.state.participantRegistered ? 'CHECKED IN' : 'NOT CHECKED IN'}
+              {applicationStateText[this.state.applicationStatus]}
+              {/* {this.state.participantRegistered ? 'CHECKED IN' : 'NOT CHECKED IN'} */}
             </p>
           </div>
-          <Button
+          <Button block
             style={style.confirmButton}
             disabled={disable}
             onClick={this.checkInEvent}
           >
             {buttonTitle}
           </Button>
+
         </Rodal>
+        <ToastContainer autoClose={1500} />
       </div>
       );
     }
@@ -238,7 +276,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
             borderBottom: '1px #DEDEDE solid',
         },
         confirmButton: {
-            display: 'flex', 
+            // display: 'flex', Firefox issues
             justifyContent: 'center', 
             width: '100%', 
             height: '60px', 

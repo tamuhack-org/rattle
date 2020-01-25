@@ -13,6 +13,9 @@ import TopNavbar from './../../Components/navbar';
 import Select from 'react-select'
 import { Redirect } from 'react-router-dom';
 
+import { toast, ToastContainer } from 'react-toastify';
+import { commonToastProperties } from './../../Components/toast';
+
 interface IProps {
   isLoggedIn: boolean;
   isLoading: boolean;
@@ -48,7 +51,16 @@ class QRScan extends React.PureComponent<IProps, IState> {
     delay: 500, 
     frontCamera: true, 
     confirmVisible: false,
-    redirectToLogin: this.props.userData === undefined}
+    redirectToLogin: false}
+  }
+
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
+    }
   }
 
   handleScan = async (data: string) => {
@@ -63,12 +75,10 @@ class QRScan extends React.PureComponent<IProps, IState> {
 
         this.setState({ qrData: qrObj, confirmVisible: true });
       } else {
-        // TODO
-        // Toast for Valid code with invalid properties
+        toast.success("QR scan successful.", commonToastProperties);
       }
     } catch (exception) {
-      // TODO 
-      // Toast for invalid QR Code
+      toast.error(exception, {...commonToastProperties, autoClose: 3000});
     }
   }
 
@@ -232,6 +242,8 @@ class QRScan extends React.PureComponent<IProps, IState> {
             closeModal={this.hide}
           />
         </div>
+
+        <ToastContainer autoClose={1500} />
       </div>
     );
   }

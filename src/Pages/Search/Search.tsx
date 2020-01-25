@@ -5,11 +5,13 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import axios from 'axios';
-import Toast from './../../Components/toast';
 import TopNavbar from './../../Components/navbar';
 import ConfirmModal from '../ConfirmModal/ConfirmModal';
 import { QRData, LoginData } from '../../types/TypeObjects';
 import { Redirect } from 'react-router-dom';
+
+import { toast, ToastContainer } from 'react-toastify';
+import { commonToastProperties } from './../../Components/toast';
 
 interface IProps {
   event: string;
@@ -25,12 +27,6 @@ interface IState {
     name: string;
     displayUsers: boolean;
     users: Array<any>;
-
-    // Added state for the toast
-    searchFailed: boolean;
-    searchSuccess: boolean;
-    currentToastID: number;
-    toastText: string;
 
     modalVisible: boolean;
     participantData: QRData;
@@ -49,10 +45,6 @@ class Selection extends React.PureComponent<IProps, IState> {
 
         displayUsers: false,
         users: [],
-        searchFailed: false, 
-        searchSuccess: false,
-        currentToastID: 0, 
-        toastText: "",
 
         modalVisible: false,
         participantData: {
@@ -61,7 +53,16 @@ class Selection extends React.PureComponent<IProps, IState> {
           "last_name": ""
         },
 
-        redirectToLogin: this.props.userData === undefined
+        redirectToLogin: false // this.props.userData === undefined
+    }
+  }
+
+  componentDidMount() {
+    if(this.props.userData == undefined) {
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
     }
   }
 
@@ -83,46 +84,6 @@ class Selection extends React.PureComponent<IProps, IState> {
     this.setState({ name: event.target.value });
   }
 
-  createFailureToast() {
-    // Create a new toast by toggling the state
-    this.setState({
-      searchFailed: true,
-      searchSuccess: false,
-      toastText: "Failed to authenticate!",
-      // Toasts need a unique ID to know when to render
-      currentToastID: this.state.currentToastID + 1
-    })
-  }
-
-  createSuccessToast(responseData) {
-    // Create a new toast by toggling the state
-    this.setState({
-      searchSuccess: true,
-      searchFailed: false,
-      users: responseData,
-      toastText: `Found ${responseData.length} user${responseData.length - 1 ? '': 's'}!`,
-      // Toasts need a unique ID to know when to render
-      currentToastID: this.state.currentToastID + 1
-    })
-  }
-
-  createWarningToast(responseData) {
-    // Create a new toast by toggling the state
-    this.setState({
-      toastText: "No users found!",
-      searchSuccess: true,
-      searchFailed: false,
-      users: responseData,
-      // Toasts need a unique ID to know when to render
-      currentToastID: this.state.currentToastID + 1
-    })
-  }
-
-  // TODO
-  handlePopup = (user) => {
-    console.log(user)
-  }
-
   // Calls the api/volunteer/search endpoint
   // NOTE: There is no hard cap or limit checking. A person can type " " and get every user for instance
   handleSearchSubmit = () => {
@@ -134,6 +95,7 @@ class Selection extends React.PureComponent<IProps, IState> {
 
     // Token taken from Redux State
     // This will get reset each server restart. This means you will have to visit the login page again.
+ 
     var token = this.props.userData.data.token;
 
     if(name && token) {
@@ -147,14 +109,17 @@ class Selection extends React.PureComponent<IProps, IState> {
       ).then(response => {
         var responseData = response.data.results
         
-        // OPTIONAL: Warning toast if there is 0 results found
-        responseData.length == 0 ? this.createWarningToast(responseData) : this.createSuccessToast(responseData) 
+        if(responseData.length == 0) {
+          toast.warn("Search found no users.", commonToastProperties);
+        } else {
+          toast.success(`Search found ${responseData.length} user${responseData.length == 1 ? '': 's'}.`, commonToastProperties);
+        }
+        this.setState({users: responseData})
       }).catch(error => {
-        this.createFailureToast() 
+        toast.error("Invalid API Call", {...commonToastProperties, autoClose: 3000});
       });
     } else {
-      // Same error message as in the .catch tag
-      this.createFailureToast() 
+      toast.error("Invalid API Call", {...commonToastProperties, autoClose: 3000});
     }
   }
 
@@ -169,18 +134,13 @@ class Selection extends React.PureComponent<IProps, IState> {
       return <Redirect to='/' />
     }
 
-    // Create the failure, success, and warning toast
-    let failureToast = (this.state.searchFailed) ? (
-        <Toast type="error" text={this.state.toastText} id={this.state.currentToastID}/>
-    ) : undefined;
-  
-    let successToast = (this.state.searchSuccess && users.length != 0) ? (
-        <Toast type="success" text={this.state.toastText} id={this.state.currentToastID}/>
-    ) : undefined;
-  
-    let warningToast = (this.state.searchSuccess && users.length == 0) ? (
-        <Toast type="warning" text={this.state.toastText} id={this.state.currentToastID}/>
-    ) : undefined;
+    if(this.props.userData === undefined) {
+      console.log('ERROR')
+      toast.error("Not Logged In", {
+        ...commonToastProperties, 
+        onClose: () => this.setState({ redirectToLogin: true })
+      });
+    }
 
     return (
       <div>
@@ -209,9 +169,8 @@ class Selection extends React.PureComponent<IProps, IState> {
                         <div onClick={() => this.setParticipantData(user)} style={{borderTop: "1px solid black", padding: "5px 0px 5px 0px"}} key={index}>
                             <h5 style={{margin: "0px"}}>
                                 {user.first_name} {user.last_name}
-                                {/* TODO Launch Popup */}
                                 <span style={{float: 'right', marginTop: "4px"}}>
-                                  <svg style={{width: "40", height: "40"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                                  <svg style={{width: "40px", height: "40px"}} viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
                                 </span>
                             </h5>
                             <p style={{margin: "0px"}}>
@@ -228,9 +187,7 @@ class Selection extends React.PureComponent<IProps, IState> {
             closeModal={this.closeModal}
           />
           {/* Render Toast (This can go anywhere inside the render. It doesn't have to be at bottom) */}
-          {failureToast}
-          {successToast}
-          {warningToast}
+          <ToastContainer autoClose={1500} />
         </div>
       </div>
     );
