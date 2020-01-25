@@ -1,29 +1,29 @@
 {
   "files": {
-    "main.js": "/test/static/js/main.5464ef32.chunk.js",
-    "main.js.map": "/test/static/js/main.5464ef32.chunk.js.map",
-    "runtime-main.js": "/test/static/js/runtime-main.3499d89a.js",
-    "runtime-main.js.map": "/test/static/js/runtime-main.3499d89a.js.map",
-    "static/css/2.a2481488.chunk.css": "/test/static/css/2.a2481488.chunk.css",
-    "static/js/2.093ae575.chunk.js": "/test/static/js/2.093ae575.chunk.js",
-    "static/js/2.093ae575.chunk.js.map": "/test/static/js/2.093ae575.chunk.js.map",
-    "index.html": "/test/index.html",
-    "precache-manifest.3db286b7a863e2d23977ef0a5d3af08d.js": "/test/precache-manifest.3db286b7a863e2d23977ef0a5d3af08d.js",
-    "service-worker.js": "/test/service-worker.js",
-    "static/css/2.a2481488.chunk.css.map": "/test/static/css/2.a2481488.chunk.css.map",
-    "static/js/2.093ae575.chunk.js.LICENSE": "/test/static/js/2.093ae575.chunk.js.LICENSE",
-    "static/media/arrowleft.svg": "/test/static/media/arrowleft.15dfedc6.svg",
-    "static/media/arrowright.svg": "/test/static/media/arrowright.9a8c6bff.svg",
-    "static/media/hiss.svg": "/test/static/media/hiss.768b0a92.svg",
-    "static/media/hiss_full_logo.svg": "/test/static/media/hiss_full_logo.396f0bda.svg",
-    "static/media/isymbol.svg": "/test/static/media/isymbol.3f17aa2f.svg",
-    "static/media/logout.svg": "/test/static/media/logout.9a8c6bff.svg",
-    "static/media/magnifying.svg": "/test/static/media/magnifying.c6fbba9a.svg"
+    "main.js": "/rattle/static/js/main.ed85fc71.chunk.js",
+    "main.js.map": "/rattle/static/js/main.ed85fc71.chunk.js.map",
+    "runtime-main.js": "/rattle/static/js/runtime-main.601eb6f8.js",
+    "runtime-main.js.map": "/rattle/static/js/runtime-main.601eb6f8.js.map",
+    "static/css/2.a2481488.chunk.css": "/rattle/static/css/2.a2481488.chunk.css",
+    "static/js/2.093ae575.chunk.js": "/rattle/static/js/2.093ae575.chunk.js",
+    "static/js/2.093ae575.chunk.js.map": "/rattle/static/js/2.093ae575.chunk.js.map",
+    "index.html": "/rattle/index.html",
+    "precache-manifest.6451f226e5d988af66c2c955496228dc.js": "/rattle/precache-manifest.6451f226e5d988af66c2c955496228dc.js",
+    "service-worker.js": "/rattle/service-worker.js",
+    "static/css/2.a2481488.chunk.css.map": "/rattle/static/css/2.a2481488.chunk.css.map",
+    "static/js/2.093ae575.chunk.js.LICENSE": "/rattle/static/js/2.093ae575.chunk.js.LICENSE",
+    "static/media/arrowleft.svg": "/rattle/static/media/arrowleft.15dfedc6.svg",
+    "static/media/arrowright.svg": "/rattle/static/media/arrowright.9a8c6bff.svg",
+    "static/media/hiss.svg": "/rattle/static/media/hiss.768b0a92.svg",
+    "static/media/hiss_full_logo.svg": "/rattle/static/media/hiss_full_logo.396f0bda.svg",
+    "static/media/isymbol.svg": "/rattle/static/media/isymbol.3f17aa2f.svg",
+    "static/media/logout.svg": "/rattle/static/media/logout.9a8c6bff.svg",
+    "static/media/magnifying.svg": "/rattle/static/media/magnifying.c6fbba9a.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.3499d89a.js",
+    "static/js/runtime-main.601eb6f8.js",
     "static/css/2.a2481488.chunk.css",
     "static/js/2.093ae575.chunk.js",
-    "static/js/main.5464ef32.chunk.js"
+    "static/js/main.ed85fc71.chunk.js"
   ]
 }
