@@ -175,8 +175,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   render() {
-    var eventName = this.props.event;
-    var attribute = this.state.foodRestrictions;
+    var eventName = "";
+    var attribute = this.state.foodRestrictions === "None" ? "No Food Restrictions" : this.state.foodRestrictions;
     var buttonTitle = "Scan";
 
     if(this.props.event === 'checked_in') {
