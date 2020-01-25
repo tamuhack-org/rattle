@@ -57,14 +57,14 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       toast.dismiss(); // Prevents a second toast from sending
       if(!response.data.checked_in && this.props.event != "checked_in") {
         // Set to top-center to make it look nicer. Optional
-        toast.warn("User is not checked in.", {...commonToastProperties, autoClose: 4000});
+        toast.warn("User is not checked in. Contact Director!", {...commonToastProperties, autoClose: 4000});
       }
 
       if(
         this.props.event == "checked_in" &&
         !(response.data.status == "I" || response.data.status == "C")
       ) {
-        toast.warn("User status not authorized.", {...commonToastProperties, autoClose: 4000});
+        toast.warn("User not authorized. Contact Director!", {...commonToastProperties, autoClose: 5000});
       }
 
       if (
@@ -74,7 +74,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         // !(this.props.attribute.toLowerCase() == 'none' && response.data.restrictions.toLowerCase() == 'other')
       ) {
         // Set to top-center to make it look nicer. Optional
-        toast.warn("Food restrictions do not match.", {...commonToastProperties, autoClose: 4000, position:"top-center"});
+        // toast.warn("Food restrictions don't match. Notify Hacker!", {...commonToastProperties, autoClose: 4000, position:"top-center"});
       }
       registeredStatus = response.data.checked_in;
       foodRestrictions = response.data.restrictions;
