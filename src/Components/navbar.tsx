@@ -21,13 +21,14 @@ interface IProps {
 interface IState {
     leftRedirect: boolean;
     rightRedirect: boolean;
+    middleRedirect: boolean;
 }
 
 class TopNavbar extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = {leftRedirect: false, rightRedirect: false};
+    this.state = {leftRedirect: false, rightRedirect: false, middleRedirect: false};
   }
 
   redirect = (redirectRoute: string) => {
@@ -43,6 +44,10 @@ class TopNavbar extends React.PureComponent<IProps, IState> {
 
   onRightPress = () => {
     this.setState({ rightRedirect: true });
+  }
+
+  onMiddlePress = () => {
+      this.setState({ middleRedirect: true });
   }
 
   render() {
@@ -81,6 +86,10 @@ class TopNavbar extends React.PureComponent<IProps, IState> {
         return this.redirect(this.props.rightRedirectRoute);
     }
 
+    if(this.state.middleRedirect) {
+        return this.redirect("/select");
+    }
+
     return (
         <div>
             <Navbar style={style.navSpacing}>
@@ -92,7 +101,7 @@ class TopNavbar extends React.PureComponent<IProps, IState> {
                 </Navbar>
                 <Navbar style={style.navSpacing}>
                     {/* TODO: Update href */}
-                    <Navbar.Brand href="/#/select" style={style.logoContainer}>
+                    <Navbar.Brand style={style.logoContainer}>
                     <img
                         alt=""
                         src={require("../assets/hiss.svg")}

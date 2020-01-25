@@ -25,18 +25,19 @@ interface IState {
   participantRegistered: boolean;
   foodRestrictions: string;
   applicationStatus: string;
+  disableSubmit: boolean;
 }
 
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: ""};
+    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: "", disableSubmit: false};
   }
 
   getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, applicationStatus}> => {
     let registeredStatus = false;
     let foodRestrictions = "None";
-    let applicationStatus = ""
+    let applicationStatus = "L"
 
     if (!this.props.modalVisible) {
       return {registeredStatus, foodRestrictions, applicationStatus};
@@ -159,22 +160,21 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     }
   }
 
-  disableSubmit = () => {
+  disableSubmit = (registrationStatus) => {
     if(this.props.event === "checked_in") {
-      return this.state.participantRegistered;
+      return registrationStatus;
     }
 
-    return !this.state.participantRegistered;
+    return !registrationStatus;
   }
 
   async componentDidUpdate() {
     const {registeredStatus, foodRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
-    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus });
+    const disableStatus = this.disableSubmit(registeredStatus);
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus, disableSubmit: disableStatus});
   }
 
   render() {
-    const disable = this.disableSubmit();
-
     var eventName = this.props.event;
     var attribute = this.state.foodRestrictions;
     var buttonTitle = "Scan";
@@ -195,7 +195,8 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       "C": "NOT CHECKED IN",
       "X": "DECLINED",
       "I": "CHECKED IN",
-      "E": "EXPIRED"
+      "E": "EXPIRED",
+      "L": "LOADING"
     }
 
     return (
@@ -235,7 +236,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           </div>
           <Button block
             style={style.confirmButton}
-            disabled={disable}
+            disabled={this.state.disableSubmit}
             onClick={this.checkInEvent}
           >
             {buttonTitle}
