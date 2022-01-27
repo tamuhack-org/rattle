@@ -15,6 +15,7 @@ import { Redirect } from 'react-router-dom';
 
 import { toast, ToastContainer } from 'react-toastify';
 import { commonToastProperties } from './../../Components/toast';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -55,6 +56,7 @@ class QRScan extends React.PureComponent<IProps, IState> {
   }
 
   componentDidMount() {
+    console.log("componentDidMount")
     if(this.props.userData == undefined) {
       toast.error("Not Logged In", {
         ...commonToastProperties, 
@@ -75,12 +77,16 @@ class QRScan extends React.PureComponent<IProps, IState> {
 
         this.setState({ qrData: qrObj, confirmVisible: true });
       } else {
+        console.log("Here 1")
         toast.success("QR scan successful.", commonToastProperties);
+        console.log("Here 2")
       }
     } catch (exception) {
-      toast.error(exception, {...commonToastProperties, autoClose: 3000});
+      console.log("Here 3")
+      toast.error("QRScan Line 81: exception", {...commonToastProperties, autoClose: 3000});
+      console.log("Here 4")
     }
-  }
+  } 
 
   switchCamera = () => {
     this.setState({frontCamera: !this.state.frontCamera});
@@ -124,25 +130,22 @@ class QRScan extends React.PureComponent<IProps, IState> {
   // These will be displayed on the second dropdown
   determineAttributes = () => {
     // https://github.com/tamuhack-org/Ouroboros/blob/86da19f7354388b77d3bda958f7054426debd728/hiss/volunteer/models.py#L6
-    var foodChoices = [
-      { value: 'NONE', label: 'None'},
-      { value: 'VEGAN', label: 'Vegan'},
-      { value: 'VEGETARIAN', label: 'Vegetarian'},
-      { value: 'HALAL', label: 'Halal'},
-      { value: 'KOSHER', label: 'Kosher'},
-      { value: 'GLUTEN_FREE', label: 'Gluten-free'},
-      { value: 'FOOD_ALLERGY', label: 'Food allergy'},
-      { value: 'DIETARY_RESTRICTION_OTHER', label: 'Other'}
+var foodChoices = [
+      { value: 'R', label: 'Regular'},
+      { value: 'V', label: 'Vegan'},
+      { value: 'G', label: 'Gluten Free'}
     ]
     if(this.state.event) {
       // Options must match the eventOptions values
       var options =  {
         "checked_in": [ { value: 'NONE', label: 'N/A'}, ],
-        "BREAKFAST": foodChoices,
-        "LUNCH": foodChoices,
-        "DINNER": foodChoices,
-        "MIDNIGHT_SNACK": foodChoices,
-        "WorkshopEvent": [ { value: 'NONE', label: 'N/A'}, ]
+        "WorkshopEvent": [ { value: 'NONE', label: 'N/A'}, ],
+        "B": foodChoices,
+        "L": foodChoices,
+        "D": foodChoices,
+        "MS": foodChoices,
+        "B2": foodChoices,
+        "L2": foodChoices
       }
       return this.state.event in options ? options[this.state.event] : undefined
     }
@@ -165,11 +168,13 @@ class QRScan extends React.PureComponent<IProps, IState> {
     // https://github.com/tamuhack-org/Ouroboros/blob/d1bafcdfaf6b54eaf7bf9a6720373e0bd3ec8855/hiss/volunteer/views.py
     const eventOptions = [
       { value: 'checked_in', label: 'Check In' },
-      { value: 'BREAKFAST', label: 'Breakfast' },
-      { value: 'LUNCH', label: 'Lunch' },
-      { value: 'DINNER', label: 'Dinner' },
-      { value: 'MIDNIGHT_SNACK', label: 'Midnight Snack' },
-      { value: 'WorkshopEvent', label: 'Workshop' }
+      { value: 'WorkshopEvent', label: 'Workshop (ANY)' },
+      { value: 'B', label: 'Breakfast (SAT)' },
+      { value: 'L', label: 'Lunch (SAT)' },
+      { value: 'D', label: 'Dinner' },
+      { value: 'MS', label: 'Midnight Snack' },
+      { value: 'B2', label: 'Breakfast (SUN)' },
+      { value: 'L2', label: 'Lunch (SUN)' }
     ]
 
     const attributeOptions = this.determineAttributes()
