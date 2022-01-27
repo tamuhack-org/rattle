@@ -68,10 +68,13 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         toast.warn("User not authorized. Contact Director!", {...commonToastProperties, autoClose: 5000});
       }
 
+      console.log(">>>", this.props, response.data)
+      // &&
+        // this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
+      
       if (
         this.props.event != "checked_in" && 
-        this.props.event != "WorkshopEvent" &&
-        this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
+        this.props.event != "WorkshopEvent" 
         // !(this.props.attribute.toLowerCase() == 'none' && response.data.restrictions.toLowerCase() == 'other')
       ) {
         // Set to top-center to make it look nicer. Optional
@@ -81,6 +84,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       foodRestrictions = response.data.restrictions;
       applicationStatus = response.data.status;
     }).catch(exception => {
+      console.log("EXCEPTION!", exception)
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
@@ -89,11 +93,23 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
   registerFood = async () => {
     const checkInFood = "https://register.tamuhack.com/api/volunteer/food";
+    console.log("Register Food",       {
+      "email": this.props.qrData.email,
+      "meal": this.props.event,
+      "restrictions": this.props.attribute
+    })
+
+    // Super hacky code, TH22 hotfix
+    let new_meal_name = this.props.event + "";
+    new_meal_name = this.props.attribute != "V" ? new_meal_name : this.props.event + "_V";
+    new_meal_name = this.props.attribute != "G" ? new_meal_name : this.props.event + "_G";
+
+    console.log(new_meal_name)
 
     await axios.post(checkInFood, 
       {
         "email": this.props.qrData.email,
-        "meal": this.props.event,
+        "meal": new_meal_name,
         "restrictions": this.props.attribute
       },
       {
@@ -102,8 +118,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         "content-type": "application/json"
       }
     }).then(response => {
+      console.log("THEN")
       toast.success("User scan successful.", commonToastProperties);
     }).catch(exception => {
+      console.log("CATCH", exception)
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
   };
