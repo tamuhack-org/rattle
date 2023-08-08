@@ -31,20 +31,19 @@ export const login = (email: string, password: string) => {
   return (dispatch: Dispatch<AppActions>) => {
     // dispatch(isLoading(true));
 
-    return fetch(
-      'https://register.tamuhack.com/api/volunteer/login', {
-      method: "POST",
-      body: JSON.stringify({
+    return axios.post(
+      'https://register.tamuhack.com/api/volunteer/login',
+      {
          email: email,
          password: password,
-      }),
-        headers: {
-          'content-type': 'application/json',
-        }
+      },
+      {
+         headers: {
+           'content-type': 'application/json',
+         }
       }
-    ).then(response => { return response.json() }
-    ).then(data => {
-      dispatch(loginSuccess({ data }));
+    ).then(response => {
+      dispatch(loginSuccess(response));
     }).catch(error => {
       dispatch(loginFailed(error));
     });

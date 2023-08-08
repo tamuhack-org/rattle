@@ -99,16 +99,15 @@ class Selection extends React.PureComponent<IProps, IState> {
     var token = this.props.userData.data.token;
 
     if(name && token) {
-      return fetch(
+      return axios.get(
         `https://register.tamuhack.com/api/volunteer/search?q=${name}`,
         {
           headers: {
             'Authorization': `Token ${token}`
           }
         }
-      ).then(response => { return response.json()}
-      ).then(data => {
-        var responseData = data.results
+      ).then(response => {
+        var responseData = response.data.results
         
         if(responseData.length == 0) {
           toast.warn("Search found no users.", commonToastProperties);

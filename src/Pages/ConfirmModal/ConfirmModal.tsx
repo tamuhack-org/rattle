@@ -24,7 +24,6 @@ interface IProps {
 interface IState {
   participantRegistered: boolean;
   foodRestrictions: string;
-  dietaryRestrictions: string[];
   applicationStatus: string;
   disableSubmit: boolean;
 }
@@ -32,21 +31,20 @@ interface IState {
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false, foodRestrictions: "None", dietaryRestrictions: [], applicationStatus: "", disableSubmit: false};
+    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: "", disableSubmit: false};
   }
 
-  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus}> => {
+  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, applicationStatus}> => {
     let registeredStatus = false;
     let foodRestrictions = "None";
     let applicationStatus = "L"
-    let dietaryRestrictions = [];
 
     if (!this.props.modalVisible) {
-      return {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus};
+      return {registeredStatus, foodRestrictions, applicationStatus};
     }
 
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
-    await fetch(
+    await axios.get(
       checkInStatusUrl,
       {
          headers: {
@@ -54,24 +52,23 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
            authorization: 'Token ' + this.props.userData.data.token
          },
       }
-    ).then(response => { return response.json();
-    }).then(data => {
+    ).then(response => {
       // Potential Bug: This route gets sent two times. 
       // This makes the toast kind of look ugly. Not critical though
       toast.dismiss(); // Prevents a second toast from sending
-      if(!data.checked_in && this.props.event != "checked_in") {
+      if(!response.data.checked_in && this.props.event != "checked_in") {
         // Set to top-center to make it look nicer. Optional
         toast.warn("User is not checked in. Contact Director!", {...commonToastProperties, autoClose: 4000});
       }
 
       if(
         this.props.event == "checked_in" &&
-        !(data.status == "I" || data.status == "C")
+        !(response.data.status == "I" || response.data.status == "C")
       ) {
         toast.warn("User not authorized. Contact Director!", {...commonToastProperties, autoClose: 5000});
       }
 
-      console.log(">>>", this.props, data)
+      console.log(">>>", this.props, response.data)
       // &&
         // this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
       
@@ -83,16 +80,15 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         // Set to top-center to make it look nicer. Optional
         // toast.warn("Food restrictions don't match. Notify Hacker!", {...commonToastProperties, autoClose: 4000, position:"top-center"});
       }
-      registeredStatus = data.checked_in;
-      foodRestrictions = data.restrictions;
-      dietaryRestrictions = data.dietary_restrictions;
-      applicationStatus = data.status;
+      registeredStatus = response.data.checked_in;
+      foodRestrictions = response.data.restrictions;
+      applicationStatus = response.data.status;
     }).catch(exception => {
       console.log("EXCEPTION!", exception)
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
-    return {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus};
+    return {registeredStatus, foodRestrictions, applicationStatus};
   }
 
   registerFood = async () => {
@@ -110,13 +106,13 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
     console.log(new_meal_name)
 
-    await fetch(checkInFood, {
-      method: "POST",
-      body: JSON.stringify({
+    await axios.post(checkInFood, 
+      {
         "email": this.props.qrData.email,
         "meal": new_meal_name,
         "restrictions": this.props.attribute
-      }),
+      },
+      {
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
@@ -133,11 +129,11 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   registerWorkshop = async () => {
     const checkInWorkshop = "https://register.tamuhack.com/api/volunteer/workshops";
 
-    await fetch(checkInWorkshop, {
-      method: "POST",
-      body: JSON.stringify({
+    await axios.post(checkInWorkshop, 
+      {
         "email": this.props.qrData.email,
-      }),
+      },
+      {
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
@@ -152,11 +148,11 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   checkInUser = async () => {
     const checkInUrl = "https://register.tamuhack.com/api/volunteer/checkin";
 
-    await fetch(checkInUrl, {
-      method: "POST",
-      body: JSON.stringify({
+    await axios.post(checkInUrl, 
+      {
         "email": this.props.qrData.email
-      }),
+      },
+      {
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
@@ -191,9 +187,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   async componentDidUpdate() {
-    const {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
+    const {registeredStatus, foodRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
     const disableStatus = this.disableSubmit(registeredStatus);
-    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, dietaryRestrictions: dietaryRestrictions, applicationStatus, disableSubmit: disableStatus});
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus, disableSubmit: disableStatus});
   }
 
   render() {
@@ -228,7 +224,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           onClose={this.props.closeModal}
           animation="slideUp"
           width={'70vw'}
-          height={430}
+          height={350}
           customStyles={{ marginBottom: 0, justifyContent: 'flex-end', paddingLeft: 25, paddingRight: 25 }}
         >
           <div style={style.badgeContainer}>
@@ -248,14 +244,6 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
             </p>
             <p style={{ fontSize: 14, margin: 0 }}>
               {this.props.qrData.email}
-            </p>
-          </div>
-          <div style={style.emailRow}>
-            <p style={{ fontSize: 16, fontWeight: 'bold', margin: 0, paddingLeft: 0}}>
-              Dietary Restrictions:
-            </p>
-            <p style={{ fontSize: 14, margin: 0 }}>
-              {JSON.stringify(this.state.dietaryRestrictions)}
             </p>
           </div>
           <div style={{...style.checkInStatusRow, borderColor: this.state.participantRegistered ? '#5CD059' : '#FFBFBF', fontSize: 20}}>
@@ -283,7 +271,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         modalContainer: {
             display: 'flex',
             backgroundColor: 'white',
-            height: 430,
+            height: 350,
             padding: 30,
         },
         checkInStatusRow: {

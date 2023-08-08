@@ -280,7 +280,7 @@ const style : { [key: string]: React.CSSProperties } = {
   modalContainer: {
     display: 'flex',
     backgroundColor: 'white',
-    height: 430,
+    height: 350,
     padding: 30,
   },
   checkInStatusRow: {
