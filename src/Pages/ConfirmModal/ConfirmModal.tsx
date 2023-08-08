@@ -34,13 +34,14 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: "", disableSubmit: false};
   }
 
-  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, applicationStatus}> => {
+  getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus}> => {
     let registeredStatus = false;
     let foodRestrictions = "None";
     let applicationStatus = "L"
+    let dietaryRestrictions = [];
 
     if (!this.props.modalVisible) {
-      return {registeredStatus, foodRestrictions, applicationStatus};
+      return {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus};
     }
 
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
@@ -82,13 +83,14 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
       }
       registeredStatus = response.data.checked_in;
       foodRestrictions = response.data.restrictions;
+      dietaryRestrictions = response.data.dietary_restrictions;
       applicationStatus = response.data.status;
     }).catch(exception => {
       console.log("EXCEPTION!", exception)
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
     });
 
-    return {registeredStatus, foodRestrictions, applicationStatus};
+    return {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus};
   }
 
   registerFood = async () => {
@@ -187,9 +189,9 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   }
 
   async componentDidUpdate() {
-    const {registeredStatus, foodRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
+    const {registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus} = await this.getRegisteredStatus(this.props.qrData.email);
     const disableStatus = this.disableSubmit(registeredStatus);
-    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, applicationStatus, disableSubmit: disableStatus});
+    this.setState({ participantRegistered: registeredStatus, foodRestrictions: foodRestrictions, dietaryRestrictions: dietaryRestrictions, applicationStatus, disableSubmit: disableStatus});
   }
 
   render() {
@@ -244,6 +246,14 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
             </p>
             <p style={{ fontSize: 14, margin: 0 }}>
               {this.props.qrData.email}
+            </p>
+          </div>
+          <div style={style.emailRow}>
+            <p style={{ fontSize: 16, fontWeight: 'bold', margin: 0, paddingLeft: 0}}>
+              Dietary Restrictions:
+            </p>
+            <p style={{ fontSize: 14, margin: 0 }}>
+              {JSON.stringify(this.state.dietaryRestrictions)}
             </p>
           </div>
           <div style={{...style.checkInStatusRow, borderColor: this.state.participantRegistered ? '#5CD059' : '#FFBFBF', fontSize: 20}}>
