@@ -44,7 +44,7 @@ export const login = (email: string, password: string) => {
       }
     ).then(response => { return response.json() }
     ).then(data => {
-      dispatch(loginSuccess(data));
+      dispatch(loginSuccess({ data }));
     }).catch(error => {
       dispatch(loginFailed(error));
     });
