@@ -24,6 +24,7 @@ interface IProps {
 interface IState {
   participantRegistered: boolean;
   foodRestrictions: string;
+  dietaryRestrictions: string[];
   applicationStatus: string;
   disableSubmit: boolean;
 }
@@ -31,7 +32,7 @@ interface IState {
 class ConfirmModal extends React.PureComponent<IProps, IState> {
   constructor(props: IProps) {
     super(props);
-    this.state = {participantRegistered: false, foodRestrictions: "None", applicationStatus: "", disableSubmit: false};
+    this.state = {participantRegistered: false, foodRestrictions: "None", dietaryRestrictions: [], applicationStatus: "", disableSubmit: false};
   }
 
   getRegisteredStatus = async (email: string) : Promise<{registeredStatus, foodRestrictions, dietaryRestrictions, applicationStatus}> => {
@@ -45,7 +46,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
     }
 
     var checkInStatusUrl = "https://register.tamuhack.com/api/volunteer/summary?email=" + email;
-    await axios.get(
+    await fetch(
       checkInStatusUrl,
       {
          headers: {
@@ -53,23 +54,24 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
            authorization: 'Token ' + this.props.userData.data.token
          },
       }
-    ).then(response => {
+    ).then(response => { return response.json();
+    }).then(data => {
       // Potential Bug: This route gets sent two times. 
       // This makes the toast kind of look ugly. Not critical though
       toast.dismiss(); // Prevents a second toast from sending
-      if(!response.data.checked_in && this.props.event != "checked_in") {
+      if(!data.checked_in && this.props.event != "checked_in") {
         // Set to top-center to make it look nicer. Optional
         toast.warn("User is not checked in. Contact Director!", {...commonToastProperties, autoClose: 4000});
       }
 
       if(
         this.props.event == "checked_in" &&
-        !(response.data.status == "I" || response.data.status == "C")
+        !(data.status == "I" || data.status == "C")
       ) {
         toast.warn("User not authorized. Contact Director!", {...commonToastProperties, autoClose: 5000});
       }
 
-      console.log(">>>", this.props, response.data)
+      console.log(">>>", this.props, data)
       // &&
         // this.props.attribute.toLowerCase() != response.data.restrictions.toLowerCase() 
       
@@ -81,10 +83,10 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         // Set to top-center to make it look nicer. Optional
         // toast.warn("Food restrictions don't match. Notify Hacker!", {...commonToastProperties, autoClose: 4000, position:"top-center"});
       }
-      registeredStatus = response.data.checked_in;
-      foodRestrictions = response.data.restrictions;
-      dietaryRestrictions = response.data.dietary_restrictions;
-      applicationStatus = response.data.status;
+      registeredStatus = data.checked_in;
+      foodRestrictions = data.restrictions;
+      dietaryRestrictions = data.dietary_restrictions;
+      applicationStatus = data.status;
     }).catch(exception => {
       console.log("EXCEPTION!", exception)
       toast.error(exception, {...commonToastProperties, autoClose: 3000});
@@ -108,13 +110,13 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
 
     console.log(new_meal_name)
 
-    await axios.post(checkInFood, 
-      {
+    await fetch(checkInFood, {
+      method: "POST",
+      body: JSON.stringify({
         "email": this.props.qrData.email,
         "meal": new_meal_name,
         "restrictions": this.props.attribute
-      },
-      {
+      }),
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
@@ -131,11 +133,11 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   registerWorkshop = async () => {
     const checkInWorkshop = "https://register.tamuhack.com/api/volunteer/workshops";
 
-    await axios.post(checkInWorkshop, 
-      {
+    await fetch(checkInWorkshop, {
+      method: "POST",
+      body: JSON.stringify({
         "email": this.props.qrData.email,
-      },
-      {
+      }),
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
@@ -150,11 +152,11 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
   checkInUser = async () => {
     const checkInUrl = "https://register.tamuhack.com/api/volunteer/checkin";
 
-    await axios.post(checkInUrl, 
-      {
+    await fetch(checkInUrl, {
+      method: "POST",
+      body: JSON.stringify({
         "email": this.props.qrData.email
-      },
-      {
+      }),
       headers: {
         authorization: "Token " + this.props.userData.data.token,
         "content-type": "application/json"
