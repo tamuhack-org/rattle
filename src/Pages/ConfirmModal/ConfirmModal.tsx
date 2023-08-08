@@ -283,7 +283,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
         modalContainer: {
             display: 'flex',
             backgroundColor: 'white',
-            height: 350,
+            height: 430,
             padding: 30,
         },
         checkInStatusRow: {
