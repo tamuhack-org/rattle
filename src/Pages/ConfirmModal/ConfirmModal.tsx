@@ -228,7 +228,7 @@ class ConfirmModal extends React.PureComponent<IProps, IState> {
           onClose={this.props.closeModal}
           animation="slideUp"
           width={'70vw'}
-          height={350}
+          height={430}
           customStyles={{ marginBottom: 0, justifyContent: 'flex-end', paddingLeft: 25, paddingRight: 25 }}
         >
           <div style={style.badgeContainer}>
